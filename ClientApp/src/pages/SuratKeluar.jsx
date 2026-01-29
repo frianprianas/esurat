@@ -129,14 +129,14 @@ export default function SuratKeluar() {
     return (
         <div className="card glass border-0 p-4 rounded-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h3 className="fw-bold m-0 text-success">Surat Keluar</h3>
+                <h3 className="fw-bold m-0" style={{ color: 'var(--success)' }}>Surat Keluar</h3>
                 <button onClick={() => { setForm({}); setShowForm(!showForm) }} className="btn btn-success rounded-pill px-4">
                     {showForm ? 'Cancel' : '+ Tambah Baru'}
                 </button>
             </div>
 
             {showForm && (
-                <div className="card border-0 shadow-sm mb-4 p-4 bg-light rounded-4">
+                <div className="card border-0 shadow-sm mb-4 p-4 rounded-4" style={{ background: 'rgba(var(--success-rgb), 0.05)', border: '1px solid var(--glass-border)' }}>
                     <form onSubmit={handleSubmit}>
                         <div className="row g-3">
                             <div className="col-md-6">
@@ -180,7 +180,7 @@ export default function SuratKeluar() {
 
             <div className="table-responsive">
                 <table className="table table-hover align-middle">
-                    <thead className="bg-light">
+                    <thead>
                         <tr>
                             <th>No Surat</th>
                             <th>Penerima</th>

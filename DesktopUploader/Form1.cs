@@ -2,123 +2,170 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Net.Http;
-using System.Threading.Tasks; // Explicit
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Security.Principal;
 using System.Diagnostics;
-using System.Runtime.InteropServices; // Added for Marshal
-// using Microsoft.Office.Interop.Word; // REMOVED to avoid Task conflict
-// using WordTask = Microsoft.Office.Interop.Word.Task; 
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace DesktopUploader;
 
 public partial class Form1 : Form
 {
     private string? _filePath;
+    private readonly Color _primaryColor = Color.FromArgb(2, 132, 199); // Blue from Web App
+    private readonly Color _bgColor = Color.FromArgb(248, 250, 252); // Light Grayish Blue
     
     // UI Controls
     private System.Windows.Forms.TextBox txtNomor;
     private System.Windows.Forms.TextBox txtPenerima;
-    private System.Windows.Forms.TextBox txtPerihal;
+    private System.Windows.Forms.ComboBox cbPerihal;
     private System.Windows.Forms.TextBox txtPassword;
     private DateTimePicker dtpTanggal;
     private Button btnUpload;
     private Label lblFile;
     private Button btnInstallReg;
-    private Button btnWordActive; // New Button
+    private Button btnWordActive;
 
     public Form1(string[] args)
     {
         InitializeComponentManual();
+        LoadCategories();
+
         if (args.Length > 0)
         {
             _filePath = args[0];
-            lblFile.Text = $"File: {Path.GetFileName(_filePath)}";
-            // Hide install button if launched with file (Uploaded mode)
+            lblFile.Text = $"📄 {Path.GetFileName(_filePath)}";
+            lblFile.ForeColor = _primaryColor;
             btnInstallReg.Visible = false; 
         }
         else
         {
-             lblFile.Text = "Mode Setup / Testing (Pilih file lewat klik kanan di Explorer)";
+             lblFile.Text = "ℹ️ Klik kanan file di Explorer untuk upload cepat";
              btnInstallReg.Visible = true;
         }
     }
 
     private void InitializeComponentManual()
     {
-        this.Text = "Upload Surat Keluar Tool (Native C#)";
-        this.Size = new Size(400, 700); // Increased Height
+        this.Text = "E-Surat Desktop Uploader";
+        this.Size = new Size(420, 750);
+        this.BackColor = _bgColor;
         this.StartPosition = FormStartPosition.CenterScreen;
-        this.FormBorderStyle = FormBorderStyle.FixedDialog;
+        this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
 
-        int y = 20;
-        int spacing = 65;
+        Panel headerPanel = new Panel() { 
+            Height = 80, 
+            Dock = DockStyle.Top, 
+            BackColor = Color.White 
+        };
+        Label lblTitle = new Label() { 
+            Text = "Upload Surat Keluar", 
+            Font = new Font("Segoe UI Semibold", 14), 
+            ForeColor = _primaryColor,
+            AutoSize = true,
+            Left = 20,
+            Top = 25
+        };
+        headerPanel.Controls.Add(lblTitle);
+        this.Controls.Add(headerPanel);
+
+        int y = 95;
+        int spacing = 68;
 
         // File Label
-        lblFile = new Label() { Left = 20, Top = y, Width = 340, Text = "File: ...", Font = new System.Drawing.Font("Segoe UI", 9, FontStyle.Bold) };
+        lblFile = new Label() { 
+            Left = 25, 
+            Top = y, 
+            Width = 350, 
+            Text = "Menunggu file...", 
+            Font = new Font("Segoe UI", 9, FontStyle.Italic),
+            ForeColor = Color.Gray
+        };
         this.Controls.Add(lblFile);
-        y += 40;
+        y += 45;
 
         // Nomor Surat
-        CreateLabel("Nomor Surat", 20, y);
-        txtNomor = CreateTextBox(20, y + 25);
+        CreateLabel("Nomor Surat (Dikosongkan jika AUTO)", 25, y);
+        txtNomor = CreateTextBox(25, y + 22);
         y += spacing;
 
         // Penerima
-        CreateLabel("Penerima / Tujuan", 20, y);
-        txtPenerima = CreateTextBox(20, y + 25);
+        CreateLabel("Penerima / Tujuan", 25, y);
+        txtPenerima = CreateTextBox(25, y + 22);
         y += spacing;
 
-        // Perihal
-        CreateLabel("Perihal", 20, y);
-        txtPerihal = CreateTextBox(20, y + 25);
+        // Perihal (DROPDOWN)
+        CreateLabel("Perihal / Kategori", 25, y);
+        cbPerihal = new ComboBox() { 
+            Left = 25, 
+            Top = y + 22, 
+            Width = 350, 
+            Font = new Font("Segoe UI", 10),
+            DropDownStyle = ComboBoxStyle.DropDown,
+            FlatStyle = FlatStyle.Flat
+        };
+        cbPerihal.Items.Add("Umum");
+        cbPerihal.SelectedIndex = 0;
+        this.Controls.Add(cbPerihal);
         y += spacing;
 
         // Tanggal Surat
-        CreateLabel("Tanggal Surat", 20, y);
-        dtpTanggal = new DateTimePicker() { Left = 20, Top = y + 25, Width = 340, Font = new System.Drawing.Font("Segoe UI", 10), Format = DateTimePickerFormat.Short };
+        CreateLabel("Tanggal Surat Keluar", 25, y);
+        dtpTanggal = new DateTimePicker() { 
+            Left = 25, 
+            Top = y + 22, 
+            Width = 350, 
+            Font = new Font("Segoe UI", 10), 
+            Format = DateTimePickerFormat.Short 
+        };
         this.Controls.Add(dtpTanggal);
-        y += spacing;
+        y += spacing + 10;
 
         // Password Configuration
-        CreateLabel("Password Konfirmasi (admin123)", 20, y);
-        txtPassword = CreateTextBox(20, y + 25);
+        CreateLabel("Password Konfirmasi", 25, y);
+        txtPassword = CreateTextBox(25, y + 22);
         txtPassword.UseSystemPasswordChar = true;
         y += spacing;
 
         // Upload Button
         btnUpload = new Button() { 
-            Text = "Upload Dokumen", 
-            Left = 20, 
+            Text = "MULAI UPLOAD", 
+            Left = 25, 
             Top = y + 10, 
-            Width = 340, 
-            Height = 45,
-            BackColor = Color.DodgerBlue,
+            Width = 350, 
+            Height = 50,
+            BackColor = _primaryColor,
             ForeColor = Color.White,
-            Font = new System.Drawing.Font("Segoe UI", 10, FontStyle.Bold),
+            Font = new Font("Segoe UI", 10, FontStyle.Bold),
             FlatStyle = FlatStyle.Flat,
             Cursor = Cursors.Hand
         };
+        btnUpload.FlatAppearance.BorderSize = 0;
         btnUpload.Click += BtnUpload_Click;
         this.Controls.Add(btnUpload);
 
-        y += 70;
+        y += 75;
 
         // NEW: Button Upload Active Word
         btnWordActive = new Button() { 
-            Text = "📄 Ambil dari Word Aktif (PDF)", 
-            Left = 20, 
+            Text = "📄 Ambil dari Word Aktif", 
+            Left = 25, 
             Top = y, 
-            Width = 340, 
+            Width = 350, 
             Height = 40,
-            BackColor = Color.DarkOrange,
-            ForeColor = Color.White,
-            Font = new System.Drawing.Font("Segoe UI", 9, FontStyle.Bold),
+            BackColor = Color.White,
+            ForeColor = Color.DarkOrange,
+            Font = new Font("Segoe UI", 9, FontStyle.Bold),
             FlatStyle = FlatStyle.Flat,
             Cursor = Cursors.Hand
         };
+        btnWordActive.FlatAppearance.BorderColor = Color.DarkOrange;
         btnWordActive.Click += BtnWordActive_Click;
         this.Controls.Add(btnWordActive);
 
@@ -127,30 +174,57 @@ public partial class Form1 : Form
         // Install Button (Registry)
         btnInstallReg = new Button() { 
             Text = "⚙️ Install Menu Klik Kanan", 
-            Left = 20, 
+            Left = 25, 
             Top = y, 
-            Width = 340, 
+            Width = 350, 
             Height = 35,
-            BackColor = Color.ForestGreen,
-            ForeColor = Color.White,
-            Font = new System.Drawing.Font("Segoe UI", 9),
+            BackColor = Color.Transparent,
+            ForeColor = Color.DimGray,
+            Font = new Font("Segoe UI", 9),
             FlatStyle = FlatStyle.Flat,
             Cursor = Cursors.Hand
         };
+        btnInstallReg.FlatAppearance.BorderSize = 0;
         btnInstallReg.Click += BtnInstallReg_Click;
         this.Controls.Add(btnInstallReg);
     }
-    
-    // ... (Helpers) ...
+
+    private async void LoadCategories()
+    {
+        try {
+            using var client = new HttpClient();
+            var res = await client.GetStringAsync("http://localhost:5000/api/kategoriperihal");
+            var cats = JsonSerializer.Deserialize<List<KategoriDto>>(res, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if (cats != null && cats.Count > 0) {
+                cbPerihal.Items.Clear();
+                foreach (var cat in cats) {
+                    cbPerihal.Items.Add(cat.Nama);
+                }
+                cbPerihal.SelectedIndex = 0;
+            }
+        } catch {
+             // Fallback if server offline
+        }
+    }
+
+    public class KategoriDto { public string Nama { get; set; } = ""; }
+
     private void CreateLabel(string text, int x, int y)
     {
-        var lbl = new Label() { Text = text, Left = x, Top = y, Width = 340, Font = new System.Drawing.Font("Segoe UI", 9) };
+        var lbl = new Label() { Text = text, Left = x, Top = y, Width = 350, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.DimGray };
         this.Controls.Add(lbl);
     }
 
     private System.Windows.Forms.TextBox CreateTextBox(int x, int y)
     {
-        var txt = new System.Windows.Forms.TextBox() { Left = x, Top = y, Width = 340, Font = new System.Drawing.Font("Segoe UI", 10) };
+        var txt = new System.Windows.Forms.TextBox() { 
+            Left = x, 
+            Top = y, 
+            Width = 350, 
+            Font = new Font("Segoe UI", 10),
+            BorderStyle = BorderStyle.FixedSingle
+        };
         this.Controls.Add(txt);
         return txt;
     }
@@ -235,10 +309,11 @@ public partial class Form1 : Form
                     
                     this.Invoke((MethodInvoker)delegate {
                         _filePath = tempPdfPath;
-                        lblFile.Text = $"Active Word: {docName} (Converted)";
-                        txtPerihal.Text = docName; // Auto-fill Perihal
+                        lblFile.Text = $"📄 {docName} (Word Aktif)";
+                        cbPerihal.Text = docName; // Auto-fill Perihal dropdown / custom text
                         btnWordActive.Text = "Sukses! Silakan Upload";
                         btnWordActive.BackColor = Color.Green;
+                        btnWordActive.ForeColor = Color.White;
                     });
                 } 
                 else 
@@ -305,7 +380,7 @@ public partial class Form1 : Form
 
             form.Add(new StringContent(string.IsNullOrEmpty(txtNomor.Text) ? "AUTO" : txtNomor.Text), "NomorSurat");
             form.Add(new StringContent(string.IsNullOrEmpty(txtPenerima.Text) ? "Unknown" : txtPenerima.Text), "Penerima");
-            form.Add(new StringContent(string.IsNullOrEmpty(txtPerihal.Text) ? "Dokumen Word" : txtPerihal.Text), "Perihal");
+            form.Add(new StringContent(string.IsNullOrEmpty(cbPerihal.Text) ? "Umum" : cbPerihal.Text), "Perihal");
             form.Add(new StringContent(dtpTanggal.Value.ToString("yyyy-MM-ddTHH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)), "TanggalSurat");
 
             // File

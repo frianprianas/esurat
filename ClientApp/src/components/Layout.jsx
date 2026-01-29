@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, Outlet } from 'react-router-dom'
 import axios from 'axios'
 
-export default function Layout({ user, setUser }) {
+export default function Layout({ user, setUser, theme, setTheme }) {
     const location = useLocation()
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState({ masuk: [], keluar: [] })
     const [showResults, setShowResults] = useState(false)
     const searchRef = useRef(null)
+
+    const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light')
 
     const handleLogout = async () => {
         localStorage.removeItem('user')
@@ -93,14 +95,14 @@ export default function Layout({ user, setUser }) {
                     )}
                     {(user?.canManagePerihal || user?.role === 'Admin') && (
                         <>
-                            <div className="mt-3 text-muted text-uppercase small fw-bold px-3" style={{ fontSize: '0.75rem' }}>Master Data</div>
+                            <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">Master Data</div>
                             <Link to="/kategori-perihal" className={`nav-link ${isActive('/kategori-perihal')}`}>
                                 <i className="bi bi-tags-fill"></i> Kelola Perihal
                             </Link>
                         </>
                     )}
 
-                    <div className="mt-3 text-muted text-uppercase small fw-bold px-3" style={{ fontSize: '0.75rem' }}>Visualisasi</div>
+                    <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">Visualisasi</div>
                     <Link to="/visual-surat/masuk" className={`nav-link ${isActive('/visual-surat/masuk')}`}>
                         <i className="bi bi-book-half"></i> Visual Surat Masuk
                     </Link>
@@ -110,7 +112,7 @@ export default function Layout({ user, setUser }) {
 
                     {user?.role === 'Admin' && (
                         <>
-                            <div className="mt-3 text-muted text-uppercase small fw-bold px-3" style={{ fontSize: '0.75rem' }}>Sistem</div>
+                            <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">Sistem</div>
                             <Link to="/pengguna" className={`nav-link ${isActive('/pengguna')}`}>
                                 <i className="bi bi-people-fill"></i> Manajemen Pengguna
                             </Link>
@@ -123,9 +125,9 @@ export default function Layout({ user, setUser }) {
                         <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '40px', height: '40px' }}>
                             <i className="bi bi-person-fill"></i>
                         </div>
-                        <div>
-                            <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>Logged in as</small>
-                            <div className="fw-bold text-dark">{user?.username}</div>
+                        <div className="ps-2 overflow-hidden">
+                            <small className="sidebar-label d-block mb-0" style={{ fontSize: '0.7rem' }}>Logged in as</small>
+                            <div className="fw-bold text-truncate" style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>{user?.username}</div>
                         </div>
                     </div>
                     <button onClick={handleLogout} className="btn btn-outline-danger w-100 btn-sm">
@@ -137,8 +139,8 @@ export default function Layout({ user, setUser }) {
             <div className="main-content">
                 <div className="top-bar d-flex justify-content-between align-items-center gap-3">
                     <div>
-                        <h4 className="fw-bold m-0 text-dark d-none d-md-block">SMK Bakti Nusantara 666</h4>
-                        <span className="text-muted small d-none d-md-block">
+                        <h4 className="fw-bold m-0 d-none d-md-block" style={{ color: 'var(--text-main)' }}>SMK Bakti Nusantara 666</h4>
+                        <span className="small d-none d-md-block" style={{ color: 'var(--text-muted)' }}>
                             Administrasi Persuratan Digital
                         </span>
                     </div>
@@ -146,12 +148,13 @@ export default function Layout({ user, setUser }) {
                     {/* Search Bar */}
                     <div className="position-relative flex-grow-1 mx-md-4" style={{ maxWidth: '500px' }} ref={searchRef}>
                         <div className="input-group">
-                            <span className="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                            <span className="input-group-text border-end-0 rounded-start-pill ps-3" style={{ background: 'var(--glass-bg)', borderColor: 'var(--border-color)' }}>
                                 <i className="bi bi-search text-muted"></i>
                             </span>
                             <input
                                 type="text"
-                                className="form-control border-start-0 rounded-end-pill shadow-none bg-white"
+                                className="form-control border-start-0 rounded-end-pill shadow-none"
+                                style={{ background: 'var(--glass-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                                 placeholder="Cari surat..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -194,8 +197,27 @@ export default function Layout({ user, setUser }) {
                         )}
                     </div>
 
-                    <div className="text-muted small text-end d-none d-lg-block" style={{ minWidth: '150px' }}>
-                        {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                    <div className="d-flex align-items-center gap-3">
+                        <button
+                            onClick={toggleTheme}
+                            className="btn btn-glass-toggle d-flex align-items-center justify-content-center p-0"
+                            style={{
+                                width: '45px',
+                                height: '45px',
+                                borderRadius: '12px',
+                                border: '1px solid var(--glass-border)',
+                                background: 'var(--glass-bg)',
+                                color: 'var(--text-main)',
+                                fontSize: '1.25rem'
+                            }}
+                            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+                        >
+                            <i className={`bi bi-${theme === 'light' ? 'moon-stars-fill' : 'sun-fill'}`}></i>
+                        </button>
+
+                        <div className="small text-end d-none d-lg-block" style={{ minWidth: '150px', color: 'var(--text-muted)' }}>
+                            {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                        </div>
                     </div>
                 </div>
                 <Outlet />

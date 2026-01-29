@@ -81,7 +81,7 @@ export default function Pengguna() {
     return (
         <div className="container-fluid p-0">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h3 className="fw-bold m-0 text-dark">Manajemen Pengguna</h3>
+                <h3 className="fw-bold m-0" style={{ color: 'var(--text-main)' }}>Manajemen Pengguna</h3>
                 <button
                     className="btn btn-primary d-flex align-items-center gap-2"
                     onClick={() => {
@@ -94,10 +94,10 @@ export default function Pengguna() {
                 </button>
             </div>
 
-            <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '15px' }}>
+            <div className="card glass border-0 shadow-sm overflow-hidden" style={{ borderRadius: '15px' }}>
                 <div className="table-responsive">
                     <table className="table table-hover align-middle mb-0">
-                        <thead className="bg-light">
+                        <thead>
                             <tr>
                                 <th className="px-4 py-3">Username</th>
                                 <th className="py-3">Role</th>
@@ -116,9 +116,9 @@ export default function Pengguna() {
                                     </td>
                                     <td>
                                         <div className="d-flex flex-wrap gap-1">
-                                            {user.canManageSuratMasuk && <span className="badge bg-light text-primary border border-primary">Surat Masuk</span>}
-                                            {user.canManageSuratKeluar && <span className="badge bg-light text-success border border-success">Surat Keluar</span>}
-                                            {user.canManagePerihal && <span className="badge bg-light text-info border border-info">Perihal</span>}
+                                            {user.canManageSuratMasuk && <span className="badge border border-primary" style={{ color: 'var(--primary)', background: 'rgba(var(--primary-rgb), 0.1)' }}>Surat Masuk</span>}
+                                            {user.canManageSuratKeluar && <span className="badge border border-success" style={{ color: 'var(--success)', background: 'rgba(var(--success-rgb), 0.1)' }}>Surat Keluar</span>}
+                                            {user.canManagePerihal && <span className="badge border border-info" style={{ color: '#0ea5e9', background: 'rgba(14, 165, 233, 0.1)' }}>Perihal</span>}
                                         </div>
                                     </td>
                                     <td className="px-4 text-end">
@@ -140,13 +140,13 @@ export default function Pengguna() {
 
             {/* Modal Form */}
             {showForm && (
-                <div className="modal d-block fade show" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }} tabIndex="-1">
+                <div className="modal d-block fade show" style={{ backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 1050 }} tabIndex="-1">
                     <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content border-0 shadow-lg rounded-4">
+                        <div className="modal-content border-0 shadow-lg rounded-4" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(20px)' }}>
                             <form onSubmit={handleSubmit}>
-                                <div className="modal-header border-bottom py-3 px-4">
-                                    <h5 className="modal-title fw-bold">{editingUser ? 'Edit Pengguna' : 'Tambah Pengguna Baru'}</h5>
-                                    <button type="button" className="btn-close" onClick={() => setShowForm(false)}></button>
+                                <div className="modal-header border-bottom py-3 px-4" style={{ borderColor: 'var(--border-color)' }}>
+                                    <h5 className="modal-title fw-bold" style={{ color: 'var(--text-main)' }}>{editingUser ? 'Edit Pengguna' : 'Tambah Pengguna Baru'}</h5>
+                                    <button type="button" className="btn-close" style={{ filter: 'var(--theme-icon-filter)' }} onClick={() => setShowForm(false)}></button>
                                 </div>
                                 <div className="modal-body p-4">
                                     <div className="mb-3">
@@ -173,7 +173,8 @@ export default function Pengguna() {
                                         <label className="form-label small fw-bold text-muted text-uppercase">Role</label>
                                         <input
                                             type="text"
-                                            className="form-control bg-light"
+                                            className="form-control"
+                                            style={{ background: 'rgba(0,0,0,0.1)', color: 'var(--text-muted)' }}
                                             value="User"
                                             readOnly
                                         />
@@ -212,8 +213,8 @@ export default function Pengguna() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer border-top p-3 px-4">
-                                    <button type="button" className="btn btn-light rounded-pill px-4" onClick={() => setShowForm(false)}>Batal</button>
+                                <div className="modal-footer border-top p-3 px-4" style={{ borderColor: 'var(--border-color)' }}>
+                                    <button type="button" className="btn btn-outline-secondary rounded-pill px-4" onClick={() => setShowForm(false)}>Batal</button>
                                     <button type="submit" className="btn btn-primary rounded-pill px-4">Simpan Perubahan</button>
                                 </div>
                             </form>

@@ -14,6 +14,12 @@ import axios from 'axios'
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   useEffect(() => {
     checkAuth()
@@ -37,8 +43,8 @@ function App() {
         {/* Word Add-in Route (Accessible publicly for sidebar) */}
         <Route path="/word-addin" element={<WordAddIn />} />
 
-        <Route element={user ? <Layout user={user} setUser={setUser} /> : <Navigate to="/login" />}>
-          <Route path="/" element={<Dashboard />} />
+        <Route element={user ? <Layout user={user} setUser={setUser} theme={theme} setTheme={setTheme} /> : <Navigate to="/login" />}>
+          <Route path="/" element={<Dashboard theme={theme} />} />
           <Route path="/surat-masuk" element={<SuratMasuk />} />
           <Route path="/surat-keluar" element={<SuratKeluar />} />
           <Route path="/kategori-perihal" element={<KategoriPerihal />} />

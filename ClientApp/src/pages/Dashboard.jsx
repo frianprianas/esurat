@@ -102,16 +102,16 @@ export default function Dashboard() {
       const moreCount = items.length - 3
 
       return (
-         <div className="calendar-tooltip shadow-sm">
-            <div className="tooltip-header mb-1 pb-1 border-bottom small fw-bold text-dark">
+         <div className="calendar-tooltip shadow-sm" style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', backdropFilter: 'blur(10px)' }}>
+            <div className="tooltip-header mb-1 pb-1 border-bottom small fw-bold" style={{ color: 'var(--text-main)', borderColor: 'var(--border-color)' }}>
                {items.length} Surat
             </div>
             {topItems.map((item, idx) => (
-               <div key={idx} className="tooltip-item mb-1">
+               <div key={idx} className="tooltip-item mb-1 d-flex align-items-center">
                   <span className={`badge ${item.type === 'in' ? 'bg-primary' : 'bg-success'} me-1`} style={{ fontSize: '0.6rem' }}>
                      {item.type === 'in' ? 'M' : 'K'}
                   </span>
-                  <span className="small text-truncate d-inline-block align-middle" style={{ maxWidth: '120px', fontSize: '0.7rem' }}>
+                  <span className="small text-truncate d-inline-block" style={{ maxWidth: '120px', fontSize: '0.7rem', color: 'var(--text-main)' }}>
                      {item.type === 'in' ? item.pengirim : (item.penerima || 'Surat Keluar')} - {item.perihal}
                   </span>
                </div>
@@ -153,11 +153,11 @@ export default function Dashboard() {
 
          <div className="row g-4 mb-5">
             <div className="col-12 col-lg-8">
-               <h4 className="fw-bold mb-4 text-dark px-2 border-start border-4 border-primary ps-3">Overview Statistik</h4>
+               <h4 className="fw-bold mb-4 px-2 border-start border-4 border-primary ps-3" style={{ color: 'var(--text-main)' }}>Overview Statistik</h4>
 
                <div className="row g-4 mb-4">
                   <div className="col-md-6">
-                     <div className="stats-card h-100 position-relative border-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)' }}>
+                     <div className="stats-card h-100 position-relative border-0 shadow-sm">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                            <div className="bg-blue-100 text-primary p-3 rounded-circle bg-opacity-10" style={{ backgroundColor: 'rgba(14, 165, 233, 0.1)' }}>
                               <i className="bi bi-inbox-fill fs-3"></i>
@@ -165,14 +165,14 @@ export default function Dashboard() {
                            <span className="badge bg-primary rounded-pill px-3 py-2">Incoming</span>
                         </div>
                         <div>
-                           <h6 className="text-muted text-uppercase fw-bold ls-1 mb-1" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>Surat Masuk</h6>
-                           <h1 className="mb-0 fw-bolder text-dark display-4">{stats.masuk}</h1>
+                           <h6 className="text-uppercase fw-bold ls-1 mb-1" style={{ fontSize: '0.75rem', letterSpacing: '1px', color: 'var(--text-muted)' }}>Surat Masuk</h6>
+                           <h1 className="mb-0 fw-bolder display-4" style={{ color: 'var(--text-main)' }}>{stats.masuk}</h1>
                         </div>
                         <Link to="/surat-masuk" className="stretched-link"></Link>
                      </div>
                   </div>
                   <div className="col-md-6">
-                     <div className="stats-card h-100 position-relative border-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)' }}>
+                     <div className="stats-card h-100 position-relative border-0 shadow-sm">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                            <div className="bg-green-100 text-success p-3 rounded-circle bg-opacity-10" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
                               <i className="bi bi-send-fill fs-3"></i>
@@ -180,8 +180,8 @@ export default function Dashboard() {
                            <span className="badge bg-success rounded-pill px-3 py-2">Outgoing</span>
                         </div>
                         <div>
-                           <h6 className="text-muted text-uppercase fw-bold ls-1 mb-1" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>Surat Keluar</h6>
-                           <h1 className="mb-0 fw-bolder text-dark display-4">{stats.keluar}</h1>
+                           <h6 className="text-uppercase fw-bold ls-1 mb-1" style={{ fontSize: '0.75rem', letterSpacing: '1px', color: 'var(--text-muted)' }}>Surat Keluar</h6>
+                           <h1 className="mb-0 fw-bolder display-4" style={{ color: 'var(--text-main)' }}>{stats.keluar}</h1>
                         </div>
                         <Link to="/surat-keluar" className="stretched-link"></Link>
                      </div>
@@ -204,11 +204,18 @@ export default function Dashboard() {
                                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                               </linearGradient>
                            </defs>
-                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
-                           <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
+                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" opacity={0.5} />
+                           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                           <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
                            <ChartTooltip
-                              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                              contentStyle={{
+                                 borderRadius: '12px',
+                                 border: '1px solid var(--glass-border)',
+                                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                 background: 'var(--glass-bg)',
+                                 color: 'var(--text-main)'
+                              }}
+                              itemStyle={{ color: 'var(--text-main)' }}
                            />
                            <Area type="monotone" dataKey="masuk" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorMasuk)" name="Surat Masuk" />
                            <Area type="monotone" dataKey="keluar" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorKeluar)" name="Surat Keluar" />
@@ -221,7 +228,7 @@ export default function Dashboard() {
                <div className="card glass border-0 p-4">
                   <div className="d-flex justify-content-between align-items-center mb-4">
                      <div>
-                        <h5 className="fw-bold m-0 text-dark">Aksi Cepat</h5>
+                        <h5 className="fw-bold m-0" style={{ color: 'var(--text-main)' }}>Aksi Cepat</h5>
                         <small className="text-muted">Shortcut untuk aktivitas surat</small>
                      </div>
                   </div>
@@ -239,7 +246,7 @@ export default function Dashboard() {
             {/* Calendar Widget */}
             <div className="col-12 col-lg-4">
                <div className="card border-0 shadow-sm p-4 h-100">
-                  <h5 className="fw-bold mb-4 text-center">Kalender Surat</h5>
+                  <h5 className="fw-bold mb-4 text-center" style={{ color: 'var(--text-main)' }}>Kalender Surat</h5>
                   <div className="calendar-container d-flex justify-content-center">
                      <Calendar
                         tileClassName={tileClassName}
@@ -251,11 +258,11 @@ export default function Dashboard() {
                      <div className="d-flex align-items-center gap-3 justify-content-center small">
                         <div className="d-flex align-items-center gap-2">
                            <span className="d-inline-block rounded-circle" style={{ width: '12px', height: '12px', backgroundColor: 'var(--primary)' }}></span>
-                           <span className="text-muted">Surat Masuk</span>
+                           <span className="small" style={{ color: 'var(--text-muted)' }}>Surat Masuk</span>
                         </div>
                         <div className="d-flex align-items-center gap-2">
                            <span className="d-inline-block rounded-circle" style={{ width: '12px', height: '12px', backgroundColor: '#10b981' }}></span>
-                           <span className="text-muted">Surat Keluar</span>
+                           <span className="small" style={{ color: 'var(--text-muted)' }}>Surat Keluar</span>
                         </div>
                      </div>
                   </div>

@@ -68,12 +68,12 @@ export default function KategoriPerihal() {
 
     return (
         <div className="container-fluid p-4">
-            <h2 className="mb-4">Kelola Kategori Perihal (Surat Keluar)</h2>
+            <h2 className="mb-4" style={{ color: 'var(--text-main)' }}>Kelola Kategori Perihal</h2>
 
             <div className="row">
                 <div className="col-md-5">
-                    <div className="card border-0 shadow-sm p-3 mb-4">
-                        <h5>{editId ? 'Edit Kategori' : 'Tambah Kategori Baru'}</h5>
+                    <div className="card glass border-0 shadow-sm p-3 mb-4">
+                        <h5 style={{ color: 'var(--text-main)' }}>{editId ? 'Edit Kategori' : 'Tambah Kategori Baru'}</h5>
                         <form onSubmit={handleSubmit} className="mt-3">
                             <div className="mb-3">
                                 <label className="form-label">Nama Perihal</label>
@@ -102,13 +102,13 @@ export default function KategoriPerihal() {
                 </div>
 
                 <div className="col-md-7">
-                    <div className="card border-0 shadow-sm p-0">
-                        <div className="card-header bg-white py-3">
-                            <h5 className="mb-0">Daftar Kategori</h5>
+                    <div className="card glass border-0 shadow-sm p-0">
+                        <div className="card-header py-3" style={{ background: 'rgba(0,0,0,0.05)', borderBottom: '1px solid var(--border-color)' }}>
+                            <h5 className="mb-0" style={{ color: 'var(--text-main)' }}>Daftar Kategori</h5>
                         </div>
                         <div className="table-responsive">
                             <table className="table table-hover align-middle mb-0">
-                                <thead className="bg-light">
+                                <thead>
                                     <tr>
                                         <th style={{ width: '60px' }} className="text-center">#</th>
                                         <th>Nama Kategori</th>

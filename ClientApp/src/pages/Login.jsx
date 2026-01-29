@@ -26,7 +26,7 @@ export default function Login({ setUser }) {
     }
 
     return (
-        <div className="d-flex min-vh-100 bg-white overflow-hidden">
+        <div className="d-flex min-vh-100 overflow-hidden" style={{ background: 'var(--bg-gradient-end)' }}>
             {/* Left Side - Image Board */}
             <div className="d-none d-lg-block col-lg-7 p-0 position-relative overflow-hidden">
                 <div style={{
@@ -51,7 +51,7 @@ export default function Login({ setUser }) {
             </div>
 
             {/* Right Side - Login Form */}
-            <div className="col-12 col-lg-5 d-flex align-items-center justify-content-center p-5 bg-light position-relative">
+            <div className="col-12 col-lg-5 d-flex align-items-center justify-content-center p-5 position-relative" style={{ background: 'var(--bg-gradient-start)', opacity: 0.9 }}>
                 <div className="w-100" style={{ maxWidth: '420px' }}>
 
                     {/* Mobile Logo Only */}
@@ -61,8 +61,8 @@ export default function Login({ setUser }) {
                     </div>
 
                     <div className="mb-5">
-                        <h2 className="fw-bold text-dark mb-2">Welcome Back!</h2>
-                        <p className="text-muted">Silakan login untuk mengakses dashboard.</p>
+                        <h2 className="fw-bold mb-2" style={{ color: 'var(--text-main)' }}>Welcome Back!</h2>
+                        <p style={{ color: 'var(--text-muted)' }}>Silakan login untuk mengakses dashboard.</p>
                     </div>
 
                     {error && (
@@ -76,7 +76,7 @@ export default function Login({ setUser }) {
                         <div className="mb-4">
                             <label className="form-label text-uppercase small text-muted fw-bold">Username</label>
                             <div className="input-group">
-                                <span className="input-group-text bg-white border-end-0 text-muted ps-3">
+                                <span className="input-group-text border-end-0 ps-3" style={{ background: 'var(--glass-bg)', borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}>
                                     <i className="bi bi-person"></i>
                                 </span>
                                 <input
@@ -85,7 +85,7 @@ export default function Login({ setUser }) {
                                     value={username}
                                     onChange={e => setUsername(e.target.value)}
                                     placeholder="Masukkan username"
-                                    style={{ backgroundColor: 'white' }}
+                                    style={{ background: 'var(--glass-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                                 />
                             </div>
                         </div>
@@ -93,7 +93,7 @@ export default function Login({ setUser }) {
                         <div className="mb-5">
                             <label className="form-label text-uppercase small text-muted fw-bold">Password</label>
                             <div className="input-group">
-                                <span className="input-group-text bg-white border-end-0 text-muted ps-3">
+                                <span className="input-group-text border-end-0 ps-3" style={{ background: 'var(--glass-bg)', borderColor: 'var(--border-color)', color: 'var(--text-muted)' }}>
                                     <i className="bi bi-lock"></i>
                                 </span>
                                 <input
@@ -102,7 +102,7 @@ export default function Login({ setUser }) {
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
                                     placeholder="Masukkan password"
-                                    style={{ backgroundColor: 'white' }}
+                                    style={{ background: 'var(--glass-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
                                 />
                             </div>
                         </div>

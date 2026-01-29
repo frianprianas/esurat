@@ -107,7 +107,7 @@ export default function VisualSurat() {
                                             <div className="badge bg-primary mb-2">#{item.nomorSurat}</div>
                                             <div className="text-muted small">{new Date(item.tanggalMasuk || item.tanggalKeluar || item.tanggalSurat).toLocaleDateString('id-ID')}</div>
                                         </div>
-                                        <h5 className="fw-bold mb-0 text-truncate" title={item.perihal}>{item.perihal}</h5>
+                                        <h5 className="fw-bold mb-0 text-truncate" style={{ color: 'var(--text-main)' }} title={item.perihal}>{item.perihal}</h5>
                                     </div>
 
                                     <div className="surat-details mb-3 small">
@@ -190,9 +190,9 @@ export default function VisualSurat() {
             {previewFile && (
                 <div className="modal d-block fade show" style={{ backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 2000 }} tabIndex="-1" onClick={() => setPreviewFile(null)}>
                     <div className="modal-dialog modal-xl modal-dialog-centered" onClick={e => e.stopPropagation()}>
-                        <div className="modal-content overflow-hidden border-0 shadow-lg rounded-4" style={{ height: '90vh' }}>
-                            <div className="modal-header bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center">
-                                <h5 className="modal-title fw-bold text-dark text-truncate mb-0" style={{ maxWidth: '80%' }} title={previewFile.name}>
+                        <div className="modal-content overflow-hidden border-0 shadow-lg rounded-4" style={{ height: '90vh', background: 'var(--glass-bg)' }}>
+                            <div className="modal-header border-bottom py-2 px-4 d-flex justify-content-between align-items-center" style={{ borderColor: 'var(--border-color)', background: 'var(--glass-bg)' }}>
+                                <h5 className="modal-title fw-bold text-truncate mb-0" style={{ maxWidth: '80%', color: 'var(--text-main)' }} title={previewFile.name}>
                                     <i className="bi bi-file-earmark-text me-2 text-primary"></i>
                                     {previewFile.name?.indexOf('_') === 36 ? previewFile.name.substring(37) : previewFile.name}
                                 </h5>

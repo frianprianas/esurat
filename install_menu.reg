@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\*\shell\UploadSurat]
+@="Upload Surat ke Server"
+"Icon"="imageres.dll,15"
+
+[HKEY_CLASSES_ROOT\*\shell\UploadSurat\command]
+@="\"C:\\Users\\Administrator\\Documents\\website_baknus\\aplikasi_surat\\DesktopUploader\\bin\\Release\\net10.0-windows\\DesktopUploader.exe\" \"%1\""

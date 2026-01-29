@@ -1,0 +1,16 @@
+﻿<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+         <!-- Ensure it uses MainLayout or EmptyLayout -->
+        <LayoutView Layout="typeof(Layout.MainLayout)">
+           <AplikasiSurat.Components.Pages.NotFound />
+        </LayoutView>
+    </NotFound>
+</Router>

@@ -1,0 +1,80 @@
+@page "/login"
+@attribute [AllowAnonymous]
+@using AplikasiSurat.Models
+@using AplikasiSurat.Services
+@using AplikasiSurat.Data
+@using Microsoft.EntityFrameworkCore
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject AppDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>Login</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="fw-bold mb-0">Login Admin</h3>
+                    <small>Aplikasi Surat SMK Bakti Nusantara 666</small>
+                </div>
+                <div class="card-body p-5">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @errorMessage
+                        </div>
+                    }
+
+                    <EditForm Model="@model" OnValidSubmit="HandleLogin">
+                        <DataAnnotationsValidator />
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Username</label>
+                            <InputText @bind-Value="model.Username" class="form-control" placeholder="Masukkan username" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Password</label>
+                            <InputText @bind-Value="model.Password" type="password" class="form-control" placeholder="Masukkan password" />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary bg-gradient py-2">Masuk</button>
+                        </div>
+                    </EditForm>
+                </div>
+                <div class="card-footer text-center bg-light py-3">
+                    <small class="text-muted">Hubungi administrator jika lupa password.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel model = new();
+    private string? errorMessage;
+
+    private class LoginModel
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+
+    private async Task HandleLogin()
+    {
+        var user = await Db.Users.FirstOrDefaultAsync(u => u.Username == model.Username && u.Password == model.Password);
+
+        if (user != null)
+        {
+            ((CustomAuthenticationStateProvider)AuthStateProvider).Login(user.Username);
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Username atau Password salah.";
+        }
+    }
+}

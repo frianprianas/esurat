@@ -1,0 +1,26 @@
+# .NET
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Node.js
+ClientApp/node_modules/
+ClientApp/dist/
+.eslintcache
+
+# Logs
+*.log
+*.txt
+users_debug.json
+build_err*.txt
+backend_*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# User Uploads (recommended to exclude)
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep

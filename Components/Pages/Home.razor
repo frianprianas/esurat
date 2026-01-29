@@ -1,0 +1,204 @@
+﻿@page "/"
+@attribute [Authorize]
+@using AplikasiSurat.Services
+@inject MailService MailService
+
+<PageTitle>Dashboard - Aplikasi Surat</PageTitle>
+
+<div class="container-fluid">
+    <!-- Animated Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0" style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); backdrop-filter: blur(20px);">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h1 class="display-5 fw-bold mb-2" style="background: linear-gradient(135deg, #6366F1, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                <i class="bi bi-stars me-3"></i>Dashboard
+                            </h1>
+                            <p class="text-muted mb-0 fs-5">Selamat datang di Aplikasi Manajemen Surat! 🎉</p>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge px-4 py-3" style="background: linear-gradient(135deg, #6366F1, #EC4899); font-size: 1rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);">
+                                <i class="bi bi-building me-2"></i>SMK Bakti Nusantara 666
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="stats-card h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);">
+                <div class="position-relative" style="z-index: 1;">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="p-3 rounded-circle" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+                                    <i class="bi bi-inbox-fill fs-3"></i>
+                                </div>
+                                <h6 class="text-uppercase ms-3 mb-0 fw-bold" style="letter-spacing: 2px;">Surat Masuk</h6>
+                            </div>
+                            <h2 class="display-2 fw-black mb-0" style="font-size: 5rem;">@suratMasukCount</h2>
+                            <p class="mb-0 mt-3 opacity-75 fs-6">📬 Total surat yang masuk ke sistem</p>
+                        </div>
+                        <div>
+                            <i class="bi bi-inbox-fill" style="font-size: 8rem; opacity: 0.15;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4" style="border-top: 2px solid rgba(255,255,255,0.2);">
+                        <a href="surat-masuk" class="text-white text-decoration-none d-flex align-items-center justify-content-between p-3 rounded-3" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); transition: all 0.3s ease;">
+                            <span class="fw-bold fs-5">Lihat Semua Surat</span>
+                            <i class="bi bi-arrow-right-circle fs-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="stats-card h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); box-shadow: 0 20px 40px rgba(240, 147, 251, 0.4);">
+                <div class="position-relative" style="z-index: 1;">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="p-3 rounded-circle" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+                                    <i class="bi bi-send-fill fs-3"></i>
+                                </div>
+                                <h6 class="text-uppercase ms-3 mb-0 fw-bold" style="letter-spacing: 2px;">Surat Keluar</h6>
+                            </div>
+                            <h2 class="display-2 fw-black mb-0" style="font-size: 5rem;">@suratKeluarCount</h2>
+                            <p class="mb-0 mt-3 opacity-75 fs-6">📤 Total surat yang keluar dari sistem</p>
+                        </div>
+                        <div>
+                            <i class="bi bi-send-fill" style="font-size: 8rem; opacity: 0.15;"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4" style="border-top: 2px solid rgba(255,255,255,0.2);">
+                        <a href="surat-keluar" class="text-white text-decoration-none d-flex align-items-center justify-content-between p-3 rounded-3" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); transition: all 0.3s ease;">
+                            <span class="fw-bold fs-5">Lihat Semua Surat</span>
+                            <i class="bi bi-arrow-right-circle fs-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions with Playful Design -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="p-3 rounded-circle me-3" style="background: linear-gradient(135deg, #FFD700, #FFA500);">
+                            <i class="bi bi-lightning-charge-fill fs-3 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">Quick Actions</h4>
+                            <p class="text-muted mb-0">Akses cepat untuk mengelola surat</p>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="surat-masuk/baru" class="btn w-100 py-4 d-flex flex-column align-items-center gap-3 border-0" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05)); border-radius: 20px; transition: all 0.3s ease;">
+                                <div class="p-3 rounded-circle" style="background: linear-gradient(135deg, #6366F1, #8B5CF6);">
+                                    <i class="bi bi-plus-circle fs-1 text-white"></i>
+                                </div>
+                                <span class="fw-bold fs-5" style="color: #6366F1;">Tambah Surat Masuk</span>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="surat-keluar/baru" class="btn w-100 py-4 d-flex flex-column align-items-center gap-3 border-0" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(236, 72, 153, 0.05)); border-radius: 20px; transition: all 0.3s ease;">
+                                <div class="p-3 rounded-circle" style="background: linear-gradient(135deg, #EC4899, #F472B6);">
+                                    <i class="bi bi-plus-circle fs-1 text-white"></i>
+                                </div>
+                                <span class="fw-bold fs-5" style="color: #EC4899;">Tambah Surat Keluar</span>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="surat-masuk" class="btn w-100 py-4 d-flex flex-column align-items-center gap-3 border-0" style="background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(20, 184, 166, 0.05)); border-radius: 20px; transition: all 0.3s ease;">
+                                <div class="p-3 rounded-circle" style="background: linear-gradient(135deg, #14B8A6, #2DD4BF);">
+                                    <i class="bi bi-list-ul fs-1 text-white"></i>
+                                </div>
+                                <span class="fw-bold fs-5" style="color: #14B8A6;">Lihat Semua Surat</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Cards with Icons -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 h-100" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)); backdrop-filter: blur(20px); border-radius: 25px;">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="d-inline-block p-4 rounded-circle" style="background: linear-gradient(135deg, #10B981, #34D399); box-shadow: 0 15px 35px rgba(16, 185, 129, 0.3);">
+                            <i class="bi bi-shield-check fs-1 text-white"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">🔒 Aman & Terpercaya</h4>
+                    <p class="text-muted mb-0">Data surat Anda tersimpan dengan aman menggunakan enkripsi database terbaik</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 h-100" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05)); backdrop-filter: blur(20px); border-radius: 25px;">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="d-inline-block p-4 rounded-circle" style="background: linear-gradient(135deg, #6366F1, #818CF8); box-shadow: 0 15px 35px rgba(99, 102, 241, 0.3);">
+                            <i class="bi bi-cloud-upload fs-1 text-white"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">☁️ Upload File Mudah</h4>
+                    <p class="text-muted mb-0">Upload dan simpan file surat dalam format digital dengan mudah dan cepat</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 h-100" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05)); backdrop-filter: blur(20px); border-radius: 25px;">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <div class="d-inline-block p-4 rounded-circle" style="background: linear-gradient(135deg, #F59E0B, #FBBF24); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.3);">
+                            <i class="bi bi-search fs-1 text-white"></i>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-3">🔍 Pencarian Cepat</h4>
+                    <p class="text-muted mb-0">Temukan surat yang Anda cari dengan fitur pencarian yang powerful</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-card a:hover {
+        background: rgba(255,255,255,0.2) !important;
+        transform: translateX(5px);
+    }
+</style>
+
+@code {
+    private int suratMasukCount = 0;
+    private int suratKeluarCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var masuks = await MailService.GetSuratMasukAsync();
+        suratMasukCount = masuks.Count;
+
+        var keluars = await MailService.GetSuratKeluarAsync();
+        suratKeluarCount = keluars.Count;
+    }
+}

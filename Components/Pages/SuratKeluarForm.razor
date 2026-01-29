@@ -1,0 +1,126 @@
+@page "/surat-keluar/baru"
+@page "/surat-keluar/edit/{Id:int}"
+@attribute [Authorize]
+@using AplikasiSurat.Models
+@using AplikasiSurat.Services
+@inject MailService MailService
+@inject FileService FileService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>@(Id == 0 ? "Tambah" : "Edit") Surat Keluar</PageTitle>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h4 class="mb-0 fw-bold text-success">
+                        <i class="bi @(Id == 0 ? "bi-plus-circle" : "bi-pencil") me-2"></i>
+                        @(Id == 0 ? "Tambah" : "Edit") Surat Keluar
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <EditForm Model="@Model" OnValidSubmit="HandleSubmit" FormName="SuratKeluarForm">
+                        <DataAnnotationsValidator />
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nomor Surat</label>
+                                <InputText @bind-Value="Model.NomorSurat" class="form-control" placeholder="Contoh: 001/SMK/2024" />
+                                <ValidationMessage For="() => Model.NomorSurat" class="text-danger small" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tanggal Keluar</label>
+                                <InputDate @bind-Value="Model.TanggalKeluar" class="form-control" />
+                                <ValidationMessage For="() => Model.TanggalKeluar" class="text-danger small" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Penerima</label>
+                            <InputText @bind-Value="Model.Penerima" class="form-control" placeholder="Nama instansi atau perorangan" />
+                            <ValidationMessage For="() => Model.Penerima" class="text-danger small" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Perihal</label>
+                            <InputTextArea @bind-Value="Model.Perihal" class="form-control" rows="3" placeholder="Isi perihal surat..." />
+                            <ValidationMessage For="() => Model.Perihal" class="text-danger small" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Upload File (PDF/Gambar)</label>
+                            <InputFile OnChange="HandleFileSelected" class="form-control" />
+                            @if (!string.IsNullOrEmpty(Model.FilePath))
+                            {
+                                <div class="mt-2 p-2 bg-light border rounded d-flex align-items-center">
+                                    <i class="bi bi-file-earmark-check text-success me-2 fs-5"></i>
+                                    <div>
+                                        <span class="d-block fw-semibold text-success">File Tersimpan</span>
+                                        <small class="text-muted">Upload file baru jika ingin mengganti.</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a href="surat-keluar" class="btn btn-light border px-4">Batal</a>
+                            <button type="submit" class="btn btn-success px-4 shadow-sm" style="background: linear-gradient(135deg, #2dce89 0%, #2dcecc 100%) !important; border:none;">
+                                <i class="bi bi-save me-2"></i>Simpan
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public SuratKeluar Model { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            var existing = await MailService.GetSuratKeluarByIdAsync(Id);
+            if (existing != null)
+            {
+                Model = existing;
+            }
+        }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        // Limit 10 MB
+        if (file.Size > 10 * 1024 * 1024)
+        {
+            return;
+        }
+
+        var path = await FileService.UploadFileAsync(file);
+        if (path != null)
+        {
+            Model.FilePath = path;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Id == 0)
+        {
+            await MailService.AddSuratKeluarAsync(Model);
+        }
+        else
+        {
+            await MailService.UpdateSuratKeluarAsync(Model);
+        }
+        Navigation.NavigateTo("surat-keluar");
+    }
+}

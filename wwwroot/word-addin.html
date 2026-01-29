@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Test Add-in</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Panel Berhasil Dimuat!</h1>
+    <p>Jika Anda melihat pesan ini, berarti koneksi ke Add-in sukses.</p>
+    <p id="status">Menunggu inisialisasi Office...</p>
+    <div id="action-area" style="display:none;">
+        <button id="btn-upload" class="btn">Upload Dokumen</button>
+    </div>
+
+    <!-- Gunakan ES5 Script agar aman di semua browser -->
+    <script>
+        Office.onReady(function (info) {
+            document.getElementById("status").innerText = "Info Host: " + info.host;
+            if (info.host === Office.HostType.Word) {
+                document.getElementById("action-area").style.display = "block";
+                document.getElementById("btn-upload").onclick = runUpload;
+            }
+        });
+
+        function runUpload() {
+            document.getElementById("status").innerText = "Sedang membaca file...";
+
+            // Mengambil file PDF
+            Office.context.document.getFileAsync(Office.FileType.Pdf, { sliceSize: 65536 }, function (result) {
+                if (result.status === Office.AsyncResultStatus.Succeeded) {
+                    var myFile = result.value;
+                    var docFileData = [];
+                    getSlice(myFile, 0, myFile.sliceCount, docFileData);
+                } else {
+                    document.getElementById("status").innerText = "Error: " + result.error.message;
+                }
+            });
+        }
+
+        function getSlice(myFile, nextSlice, sliceCount, docFileData) {
+            myFile.getSliceAsync(nextSlice, function (result) {
+                if (result.status === Office.AsyncResultStatus.Succeeded) {
+                    docFileData.push(result.value.data);
+                    if (nextSlice < sliceCount - 1) {
+                        getSlice(myFile, nextSlice + 1, sliceCount, docFileData);
+                    } else {
+                        myFile.closeAsync();
+                        uploadToServer(docFileData);
+                    }
+                } else {
+                    document.getElementById("status").innerText = "Error Slice";
+                }
+            });
+        }
+
+        function uploadToServer(docFileData) {
+            document.getElementById("status").innerText = "Mengupload...";
+
+            // Gabungkan array bytes
+            var byteArrays = [];
+            for (var i = 0; i < docFileData.length; i++) {
+                byteArrays.push(new Uint8Array(docFileData[i]));
+            }
+            var blob = new Blob(byteArrays, { type: 'application/pdf' });
+
+            var formData = new FormData();
+            formData.append("NomorSurat", "ADDIN-" + Math.floor(Math.random() * 9999));
+            formData.append("Pengirim", "Word User");
+            formData.append("Perihal", "Dokumen Word");
+            formData.append("TanggalSurat", new Date().toISOString());
+            formData.append("File", blob, "doc.pdf");
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://localhost:5001/api/suratmasuk/upload", true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        document.getElementById("status").innerText = "SUKSES! Terkirim.";
+                    } else {
+                        document.getElementById("status").innerText = "Gagal Server: " + xhr.status + " " + xhr.responseText;
+                    }
+                }
+            };
+            xhr.send(formData);
+        }
+    </script>
+</body>
+
+</html>

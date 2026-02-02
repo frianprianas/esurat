@@ -67,13 +67,13 @@ export default function KategoriPerihal() {
     }
 
     return (
-        <div className="container-fluid p-4">
-            <h2 className="mb-4" style={{ color: 'var(--text-main)' }}>Kelola Kategori Perihal</h2>
+        <div className="container-fluid p-0">
+            <h5 className="mb-3 fw-bold" style={{ color: 'var(--text-main)' }}>Kelola Kategori Perihal</h5>
 
-            <div className="row">
+            <div className="row g-3">
                 <div className="col-md-5">
-                    <div className="card glass border-0 shadow-sm p-3 mb-4">
-                        <h5 style={{ color: 'var(--text-main)' }}>{editId ? 'Edit Kategori' : 'Tambah Kategori Baru'}</h5>
+                    <div className="card glass border-0 shadow-sm p-3 mb-3">
+                        <h6 className="fw-bold mb-3" style={{ color: 'var(--text-main)' }}>{editId ? 'Edit Kategori' : 'Tambah Kategori Baru'}</h6>
                         <form onSubmit={handleSubmit} className="mt-3">
                             <div className="mb-3">
                                 <label className="form-label">Nama Perihal</label>

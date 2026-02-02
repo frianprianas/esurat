@@ -79,7 +79,7 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                         <span>E-Surat</span>
                     </h4>
                 </div>
-                <div className="py-3">
+                <div className="py-3 flex-grow-1 overflow-auto" style={{ scrollbarWidth: 'thin' }}>
                     <Link to="/" className={`nav-link ${isActive('/')}`}>
                         <i className="bi bi-grid-fill"></i> Dashboard
                     </Link>
@@ -115,6 +115,9 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                             <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">Sistem</div>
                             <Link to="/pengguna" className={`nav-link ${isActive('/pengguna')}`}>
                                 <i className="bi bi-people-fill"></i> Manajemen Pengguna
+                            </Link>
+                            <Link to="/notifikasi" className={`nav-link ${isActive('/notifikasi')}`}>
+                                <i className="bi bi-bell-fill"></i> Notifikasi Bulanan
                             </Link>
                         </>
                     )}
@@ -202,20 +205,20 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                             onClick={toggleTheme}
                             className="btn btn-glass-toggle d-flex align-items-center justify-content-center p-0"
                             style={{
-                                width: '45px',
-                                height: '45px',
-                                borderRadius: '12px',
+                                width: '36px',
+                                height: '36px',
+                                borderRadius: '10px',
                                 border: '1px solid var(--glass-border)',
                                 background: 'var(--glass-bg)',
                                 color: 'var(--text-main)',
-                                fontSize: '1.25rem'
+                                fontSize: '1rem'
                             }}
                             title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
                         >
                             <i className={`bi bi-${theme === 'light' ? 'moon-stars-fill' : 'sun-fill'}`}></i>
                         </button>
 
-                        <div className="small text-end d-none d-lg-block" style={{ minWidth: '150px', color: 'var(--text-muted)' }}>
+                        <div className="small text-end d-none d-lg-block" style={{ minWidth: '150px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                             {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                         </div>
                     </div>

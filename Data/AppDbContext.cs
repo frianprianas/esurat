@@ -18,6 +18,7 @@ namespace AplikasiSurat.Data
         public DbSet<SuratKeluar> SuratKeluar { get; set; }
         public DbSet<KategoriPerihal> KategoriPerihal { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Notifikasi> Notifikasis { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

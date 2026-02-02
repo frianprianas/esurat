@@ -128,30 +128,30 @@ export default function Dashboard() {
    return (
       <div className="container-fluid p-0">
          {/* Hero Section */}
-         <div className="card border-0 mb-5 overflow-hidden position-relative shadow-lg"
+         <div className="card border-0 mb-4 overflow-hidden position-relative shadow-sm"
             style={{
-               borderRadius: '24px',
+               borderRadius: '16px',
                background: 'linear-gradient(120deg, var(--primary) 0%, var(--primary-dark) 100%)'
             }}>
-            <div className="p-5 position-relative z-1 text-center text-md-start">
-               <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-4">
+            <div className="p-4 position-relative z-1 text-center text-md-start">
+               <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
                   <div>
-                     <h2 className="text-white fw-bold mb-2">Selamat Datang, Admin!</h2>
-                     <p className="text-white-50 m-0 fs-5">Dashboard Administrasi E-Surat SMK Bakti Nusantara 666</p>
+                     <h3 className="text-white fw-bold mb-1">Selamat Datang, Admin!</h3>
+                     <p className="text-white-50 m-0 small">Dashboard Administrasi E-Surat SMK Bakti Nusantara 666</p>
                   </div>
-                  <div className="bg-white bg-opacity-10 p-3 rounded-circle d-none d-md-block">
-                     <i className="bi bi-building text-white fs-1"></i>
+                  <div className="bg-white bg-opacity-10 p-2 rounded-circle d-none d-md-block">
+                     <i className="bi bi-building text-white fs-4"></i>
                   </div>
                </div>
             </div>
             <div className="position-absolute top-0 end-0 opacity-10" style={{ transform: 'translate(30%, -30%)' }}>
-               <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+               <svg width="250" height="250" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <path fill="#FFFFFF" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.3C87.4,-33.5,90.1,-18,87.9,-3.8C85.7,10.4,78.6,23.3,69.6,34.5C60.6,45.7,49.7,55.2,37.6,62.3C25.5,69.4,12.2,74.1,-0.5,75C-13.2,75.8,-25.9,72.8,-37.7,65.8C-49.5,58.8,-60.4,47.8,-68.6,35.1C-76.8,22.4,-82.3,8,-80.9,-5.8C-79.5,-19.6,-71.2,-32.8,-61.2,-43.3C-51.2,-53.8,-39.5,-61.6,-27.1,-69.8C-14.7,-78,-1.6,-86.6,12.3,-84.5C26.2,-82.4,52.4,-69.6,44.7,-76.4Z" transform="translate(100 100)" />
                </svg>
             </div>
          </div>
 
-         <div className="row g-4 mb-5">
+         <div className="row g-4 mb-4">
             <div className="col-12 col-lg-8">
                <h4 className="fw-bold mb-4 px-2 border-start border-4 border-primary ps-3" style={{ color: 'var(--text-main)' }}>Overview Statistik</h4>
 

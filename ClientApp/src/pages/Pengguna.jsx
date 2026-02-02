@@ -80,10 +80,10 @@ export default function Pengguna() {
 
     return (
         <div className="container-fluid p-0">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h3 className="fw-bold m-0" style={{ color: 'var(--text-main)' }}>Manajemen Pengguna</h3>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="fw-bold m-0" style={{ color: 'var(--text-main)' }}>Manajemen Pengguna</h5>
                 <button
-                    className="btn btn-primary d-flex align-items-center gap-2"
+                    className="btn btn-primary btn-sm d-flex align-items-center gap-2 px-3"
                     onClick={() => {
                         setEditingUser(null)
                         setFormData({ username: '', password: '', role: 'User', canManageSuratMasuk: true, canManageSuratKeluar: true, canManagePerihal: true })

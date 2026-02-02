@@ -8,6 +8,7 @@ import KategoriPerihal from './pages/KategoriPerihal'
 import WordAddIn from './pages/WordAddIn'
 import VisualSurat from './pages/VisualSurat'
 import Pengguna from './pages/Pengguna'
+import Notifikasi from './pages/Notifikasi'
 import Layout from './components/Layout'
 import axios from 'axios'
 
@@ -50,6 +51,7 @@ function App() {
           <Route path="/kategori-perihal" element={<KategoriPerihal />} />
           <Route path="/visual-surat/:type" element={<VisualSurat />} />
           <Route path="/pengguna" element={<Pengguna />} />
+          <Route path="/notifikasi" element={<Notifikasi />} />
         </Route>
       </Routes>
     </HashRouter>

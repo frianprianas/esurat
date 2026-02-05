@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function KategoriPerihal() {
+    const { t } = useLanguage()
     const [items, setItems] = useState([])
     const [newName, setNewName] = useState('')
     const [editId, setEditId] = useState(null)
@@ -41,7 +43,7 @@ export default function KategoriPerihal() {
         } catch (e) {
             console.error(e)
             const msg = e.response ? `Status: ${e.response.status}\nData: ${JSON.stringify(e.response.data)}` : e.message
-            alert(`Gagal menyimpan kategori:\n${msg}`)
+            alert(`${t('categories.alert_save_fail')}:\n${msg}`)
         }
     }
 
@@ -56,44 +58,44 @@ export default function KategoriPerihal() {
     }
 
     const handleDelete = async (id) => {
-        if (!confirm('Hapus kategori ini?')) return
+        if (!confirm(t('categories.alert_delete'))) return
 
         try {
             await axios.delete(`/api/kategoriperihal/${id}`)
             setItems(items.filter(i => i.id !== id))
         } catch (e) {
-            alert('Gagal menghapus kategori')
+            alert(t('categories.alert_delete_fail'))
         }
     }
 
     return (
         <div className="container-fluid p-0">
-            <h5 className="mb-3 fw-bold" style={{ color: 'var(--text-main)' }}>Kelola Kategori Perihal</h5>
+            <h5 className="mb-3 fw-bold" style={{ color: 'var(--text-main)' }}>{t('categories.title')}</h5>
 
             <div className="row g-3">
                 <div className="col-md-5">
                     <div className="card glass border-0 shadow-sm p-3 mb-3">
-                        <h6 className="fw-bold mb-3" style={{ color: 'var(--text-main)' }}>{editId ? 'Edit Kategori' : 'Tambah Kategori Baru'}</h6>
+                        <h6 className="fw-bold mb-3" style={{ color: 'var(--text-main)' }}>{editId ? t('categories.edit_title') : t('categories.add_title')}</h6>
                         <form onSubmit={handleSubmit} className="mt-3">
                             <div className="mb-3">
-                                <label className="form-label">Nama Perihal</label>
+                                <label className="form-label">{t('categories.name_label')}</label>
                                 <input
                                     type="text"
                                     className="form-control"
                                     value={newName}
                                     onChange={e => setNewName(e.target.value)}
-                                    placeholder="Contoh: Undangan Rapat"
+                                    placeholder={t('categories.placeholder')}
                                     required
                                 />
                             </div>
                             <div className="d-flex gap-2">
                                 <button type="submit" className={`btn w-100 ${editId ? 'btn-success' : 'btn-primary'}`}>
                                     <i className={`bi ${editId ? 'bi-save' : 'bi-plus-lg'} me-2`}></i>
-                                    {editId ? 'Simpan Perubahan' : 'Tambah'}
+                                    {editId ? t('categories.save_changes') : t('common.add')}
                                 </button>
                                 {editId && (
                                     <button type="button" onClick={handleCancel} className="btn btn-secondary">
-                                        Batal
+                                        {t('common.cancel')}
                                     </button>
                                 )}
                             </div>
@@ -104,22 +106,22 @@ export default function KategoriPerihal() {
                 <div className="col-md-7">
                     <div className="card glass border-0 shadow-sm p-0">
                         <div className="card-header py-3" style={{ background: 'rgba(0,0,0,0.05)', borderBottom: '1px solid var(--border-color)' }}>
-                            <h5 className="mb-0" style={{ color: 'var(--text-main)' }}>Daftar Kategori</h5>
+                            <h5 className="mb-0" style={{ color: 'var(--text-main)' }}>{t('categories.list_title')}</h5>
                         </div>
                         <div className="table-responsive">
                             <table className="table table-hover align-middle mb-0">
                                 <thead>
                                     <tr>
                                         <th style={{ width: '60px' }} className="text-center">#</th>
-                                        <th>Nama Kategori</th>
-                                        <th style={{ width: '120px' }} className="text-center">Aksi</th>
+                                        <th>{t('categories.table_name')}</th>
+                                        <th style={{ width: '120px' }} className="text-center">{t('common.action')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {loading ? (
-                                        <tr><td colSpan="3" className="text-center py-4">Loading...</td></tr>
+                                        <tr><td colSpan="3" className="text-center py-4">{t('common.loading')}</td></tr>
                                     ) : items.length === 0 ? (
-                                        <tr><td colSpan="3" className="text-center py-4 text-muted">Belum ada kategori</td></tr>
+                                        <tr><td colSpan="3" className="text-center py-4 text-muted">{t('categories.empty_list')}</td></tr>
                                     ) : (
                                         items.map((item, idx) => (
                                             <tr key={item.id}>
@@ -129,7 +131,7 @@ export default function KategoriPerihal() {
                                                     <button
                                                         onClick={() => handleEdit(item)}
                                                         className="btn btn-sm btn-outline-success me-2"
-                                                        title="Edit"
+                                                        title={t('common.edit')}
                                                     >
                                                         <i className="bi bi-pencil"></i>
                                                     </button>
@@ -137,7 +139,7 @@ export default function KategoriPerihal() {
                                                         <button
                                                             onClick={() => handleDelete(item.id)}
                                                             className="btn btn-sm btn-outline-danger"
-                                                            title="Hapus"
+                                                            title={t('common.delete')}
                                                         >
                                                             <i className="bi bi-trash"></i>
                                                         </button>

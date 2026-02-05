@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, Outlet } from 'react-router-dom'
 import axios from 'axios'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Layout({ user, setUser, theme, setTheme }) {
     const location = useLocation()
+    const { t, language, setLanguage } = useLanguage()
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState({ masuk: [], keluar: [] })
     const [showResults, setShowResults] = useState(false)
     const searchRef = useRef(null)
 
     const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light')
+    const toggleLanguage = () => setLanguage(language === 'id' ? 'en' : 'id')
 
     const handleLogout = async () => {
         localStorage.removeItem('user')
@@ -76,48 +79,48 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                 <div className="sidebar-header">
                     <h4>
                         <img src="/images/logo.png" alt="Logo" className="sidebar-logo-img me-2" />
-                        <span>E-Surat</span>
+                        <span>{t('app_name')}</span>
                     </h4>
                 </div>
                 <div className="py-3 flex-grow-1 overflow-auto" style={{ scrollbarWidth: 'thin' }}>
                     <Link to="/" className={`nav-link ${isActive('/')}`}>
-                        <i className="bi bi-grid-fill"></i> Dashboard
+                        <i className="bi bi-grid-fill"></i> {t('menu.dashboard')}
                     </Link>
                     {user?.canManageSuratMasuk && (
                         <Link to="/surat-masuk" className={`nav-link ${isActive('/surat-masuk')}`}>
-                            <i className="bi bi-inbox-fill"></i> Surat Masuk
+                            <i className="bi bi-inbox-fill"></i> {t('menu.surat_masuk')}
                         </Link>
                     )}
                     {user?.canManageSuratKeluar && (
                         <Link to="/surat-keluar" className={`nav-link ${isActive('/surat-keluar')}`}>
-                            <i className="bi bi-send-fill"></i> Surat Keluar
+                            <i className="bi bi-send-fill"></i> {t('menu.surat_keluar')}
                         </Link>
                     )}
                     {(user?.canManagePerihal || user?.role === 'Admin') && (
                         <>
-                            <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">Master Data</div>
+                            <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">{t('menu.master_data')}</div>
                             <Link to="/kategori-perihal" className={`nav-link ${isActive('/kategori-perihal')}`}>
-                                <i className="bi bi-tags-fill"></i> Kelola Perihal
+                                <i className="bi bi-tags-fill"></i> {t('menu.kelola_perihal')}
                             </Link>
                         </>
                     )}
 
-                    <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">Visualisasi</div>
+                    <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">{t('menu.visualisasi')}</div>
                     <Link to="/visual-surat/masuk" className={`nav-link ${isActive('/visual-surat/masuk')}`}>
-                        <i className="bi bi-book-half"></i> Visual Surat Masuk
+                        <i className="bi bi-book-half"></i> {t('menu.visual_masuk')}
                     </Link>
                     <Link to="/visual-surat/keluar" className={`nav-link ${isActive('/visual-surat/keluar')}`}>
-                        <i className="bi bi-book"></i> Visual Surat Keluar
+                        <i className="bi bi-book"></i> {t('menu.visual_keluar')}
                     </Link>
 
                     {user?.role === 'Admin' && (
                         <>
-                            <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">Sistem</div>
+                            <div className="mt-4 text-uppercase small fw-bold px-3 sidebar-label">{t('menu.sistem')}</div>
                             <Link to="/pengguna" className={`nav-link ${isActive('/pengguna')}`}>
-                                <i className="bi bi-people-fill"></i> Manajemen Pengguna
+                                <i className="bi bi-people-fill"></i> {t('menu.manajemen_pengguna')}
                             </Link>
                             <Link to="/notifikasi" className={`nav-link ${isActive('/notifikasi')}`}>
-                                <i className="bi bi-bell-fill"></i> Notifikasi Bulanan
+                                <i className="bi bi-bell-fill"></i> {t('menu.notifikasi')}
                             </Link>
                         </>
                     )}
@@ -129,12 +132,12 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                             <i className="bi bi-person-fill"></i>
                         </div>
                         <div className="ps-2 overflow-hidden">
-                            <small className="sidebar-label d-block mb-0" style={{ fontSize: '0.7rem' }}>Logged in as</small>
+                            <small className="sidebar-label d-block mb-0" style={{ fontSize: '0.7rem' }}>{t('common.logged_in_as')}</small>
                             <div className="fw-bold text-truncate" style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>{user?.username}</div>
                         </div>
                     </div>
                     <button onClick={handleLogout} className="btn btn-outline-danger w-100 btn-sm">
-                        <i className="bi bi-box-arrow-right me-1"></i> Logout
+                        <i className="bi bi-box-arrow-right me-1"></i> {t('common.logout')}
                     </button>
                 </div>
             </div>
@@ -144,7 +147,7 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                     <div>
                         <h4 className="fw-bold m-0 d-none d-md-block" style={{ color: 'var(--text-main)' }}>SMK Bakti Nusantara 666</h4>
                         <span className="small d-none d-md-block" style={{ color: 'var(--text-muted)' }}>
-                            Administrasi Persuratan Digital
+                            {t('subtitle')}
                         </span>
                     </div>
 
@@ -158,7 +161,7 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                                 type="text"
                                 className="form-control border-start-0 rounded-end-pill shadow-none"
                                 style={{ background: 'var(--glass-bg)', borderColor: 'var(--border-color)', color: 'var(--text-main)' }}
-                                placeholder="Cari surat..."
+                                placeholder={t('common.search_placeholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onFocus={() => searchQuery && setShowResults(true)}
@@ -169,12 +172,12 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                         {showResults && searchQuery && (
                             <div className="search-dropdown shadow-lg rounded-4 border-0">
                                 {searchResults.masuk.length === 0 && searchResults.keluar.length === 0 ? (
-                                    <div className="p-3 text-center text-muted">Tidak ditemukan data.</div>
+                                    <div className="p-3 text-center text-muted">{t('layout.no_results')}</div>
                                 ) : (
                                     <>
                                         {searchResults.masuk.length > 0 && user?.canManageSuratMasuk && (
                                             <div className="search-section">
-                                                <div className="section-title">Surat Masuk</div>
+                                                <div className="section-title">{t('letters.incoming.title')}</div>
                                                 {searchResults.masuk.map(item => (
                                                     <Link to="/surat-masuk" key={item.id} className="search-item" onClick={() => setShowResults(false)}>
                                                         <div className="fw-bold text-primary">{item.nomorSurat}</div>
@@ -185,11 +188,11 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                                         )}
                                         {searchResults.keluar.length > 0 && user?.canManageSuratKeluar && (
                                             <div className="search-section">
-                                                <div className="section-title">Surat Keluar</div>
+                                                <div className="section-title">{t('letters.outgoing.title')}</div>
                                                 {searchResults.keluar.map(item => (
                                                     <Link to="/surat-keluar" key={item.id} className="search-item" onClick={() => setShowResults(false)}>
                                                         <div className="fw-bold text-success">{item.nomorSurat}</div>
-                                                        <div className="small text-truncate">Kpd: {item.penerima} - {item.perihal}</div>
+                                                        <div className="small text-truncate">{t('layout.to_recipient')} {item.penerima} - {item.perihal}</div>
                                                     </Link>
                                                 ))}
                                             </div>
@@ -201,6 +204,25 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                     </div>
 
                     <div className="d-flex align-items-center gap-3">
+                        {/* Language Toggle */}
+                        <button
+                            onClick={toggleLanguage}
+                            className="btn btn-glass-toggle d-flex align-items-center justify-content-center p-0"
+                            style={{
+                                width: '36px',
+                                height: '36px',
+                                borderRadius: '10px',
+                                border: '1px solid var(--glass-border)',
+                                background: 'var(--glass-bg)',
+                                color: 'var(--text-main)',
+                                fontSize: '0.9rem',
+                                fontWeight: 'bold'
+                            }}
+                            title={`Current Language: ${language.toUpperCase()}`}
+                        >
+                            {language.toUpperCase()}
+                        </button>
+
                         <button
                             onClick={toggleTheme}
                             className="btn btn-glass-toggle d-flex align-items-center justify-content-center p-0"
@@ -219,7 +241,7 @@ export default function Layout({ user, setUser, theme, setTheme }) {
                         </button>
 
                         <div className="small text-end d-none d-lg-block" style={{ minWidth: '150px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-                            {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                            {new Date().toLocaleDateString(language === 'id' ? 'id-ID' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                         </div>
                     </div>
                 </div>

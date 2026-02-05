@@ -12,7 +12,10 @@ import Notifikasi from './pages/Notifikasi'
 import Layout from './components/Layout'
 import axios from 'axios'
 
+import { useLanguage } from './contexts/LanguageContext'
+
 function App() {
+  const { t } = useLanguage()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
@@ -34,12 +37,12 @@ function App() {
     setLoading(false)
   }
 
-  if (loading) return <div className="d-flex justify-content-center align-items-center vh-100 text-white">Loading...</div>
+  if (loading) return <div className="d-flex justify-content-center align-items-center vh-100 text-white">{t('common.loading')}</div>
 
   return (
     <HashRouter>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login setUser={setUser} />} />
+        <Route path="/login" element={user ? <Navigate to="/" /> : <Login setUser={setUser} theme={theme} setTheme={setTheme} />} />
 
         {/* Word Add-in Route (Accessible publicly for sidebar) */}
         <Route path="/word-addin" element={<WordAddIn />} />

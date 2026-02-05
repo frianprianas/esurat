@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useLocation } from 'react-router-dom'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function SuratKeluar() {
+    const { t } = useLanguage()
     const [data, setData] = useState([])
     const [form, setForm] = useState({})
     const [showForm, setShowForm] = useState(false)
@@ -90,15 +92,15 @@ export default function SuratKeluar() {
             fetchData()
             setForm({})
             setShowForm(false)
-            alert("Data berhasil disimpan!")
+            alert(t('letters.alert.save_success'))
         } catch (e) {
             console.error("Save error:", e)
-            alert("Gagal menyimpan data: " + (e.response?.data?.message || e.message))
+            alert(`${t('letters.alert.save_fail')}: ${e.response?.data?.message || e.message}`)
         }
     }
 
     const handleDelete = async (id) => {
-        if (!confirm('Hapus data ini?')) return;
+        if (!confirm(t('letters.alert.delete_confirm'))) return;
         try {
             await axios.delete(`/api/suratkeluar/${id}`)
             fetchData()
@@ -129,9 +131,9 @@ export default function SuratKeluar() {
     return (
         <div className="card glass border-0 p-3 rounded-3">
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="fw-bold m-0" style={{ color: 'var(--success)' }}>Surat Keluar</h5>
+                <h5 className="fw-bold m-0" style={{ color: 'var(--success)' }}>{t('letters.outgoing.title')}</h5>
                 <button onClick={() => { setForm({}); setShowForm(!showForm) }} className="btn btn-success btn-sm rounded-pill px-3">
-                    {showForm ? 'Cancel' : '+ Tambah Baru'}
+                    {showForm ? t('letters.outgoing.cancel') : t('letters.outgoing.add')}
                 </button>
             </div>
 
@@ -140,38 +142,38 @@ export default function SuratKeluar() {
                     <form onSubmit={handleSubmit}>
                         <div className="row g-3">
                             <div className="col-md-6">
-                                <label className="form-label">Nomor Surat</label>
+                                <label className="form-label">{t('letters.form.number')}</label>
                                 <input className="form-control rounded-3" value={form.nomorSurat || ''} onChange={e => setForm({ ...form, nomorSurat: e.target.value })} required />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label">Penerima</label>
+                                <label className="form-label">{t('letters.form.receiver')}</label>
                                 <input className="form-control rounded-3" value={form.penerima || ''} onChange={e => setForm({ ...form, penerima: e.target.value })} required />
                             </div>
                             <div className="col-12">
-                                <label className="form-label">Perihal</label>
+                                <label className="form-label">{t('letters.form.subject')}</label>
                                 <select className="form-select rounded-3" value={form.perihal || ''} onChange={e => setForm({ ...form, perihal: e.target.value })} required>
-                                    <option value="">-- Pilih Perihal --</option>
+                                    <option value="">{t('letters.form.select_subject')}</option>
                                     {kategoriList.map(k => (
                                         <option key={k.id} value={k.nama}>{k.nama}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label">Tanggal Surat</label>
+                                <label className="form-label">{t('letters.form.date')}</label>
                                 <input type="date" className="form-control rounded-3" value={form.tanggalSurat ? form.tanggalSurat.split('T')[0] : (form.tanggalKeluar ? form.tanggalKeluar.split('T')[0] : '')} onChange={e => setForm({ ...form, tanggalSurat: e.target.value })} required />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label">Upload Dokumen</label>
+                                <label className="form-label">{t('letters.form.upload')}</label>
                                 <input type="file" className="form-control rounded-3" accept=".doc,.docx,.odt,.pdf,.jpg,.jpeg" onChange={(e) => {
                                     const file = e.target.files[0];
                                     if (file) {
                                         setForm({ ...form, filePath: file.name, fileObj: file });
                                     }
                                 }} />
-                                <small className="text-muted">Format: PDF, DOC, DOCX, ODT, JPEG</small>
+                                <small className="text-muted">{t('letters.form.format_hint')}</small>
                             </div>
                             <div className="col-12 mt-4">
-                                <button type="submit" className="btn btn-success rounded-pill px-5">Save Surat</button>
+                                <button type="submit" className="btn btn-success rounded-pill px-5">{t('letters.form.save')}</button>
                             </div>
                         </div>
                     </form>
@@ -182,12 +184,12 @@ export default function SuratKeluar() {
                 <table className="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>No Surat</th>
-                            <th>Penerima</th>
-                            <th>Perihal</th>
-                            <th>Tanggal</th>
-                            <th>File</th>
-                            <th>Actions</th>
+                            <th>{t('letters.outgoing.table.no_surat')}</th>
+                            <th>{t('letters.outgoing.table.receiver')}</th>
+                            <th>{t('letters.outgoing.table.subject')}</th>
+                            <th>{t('letters.outgoing.table.date')}</th>
+                            <th>{t('letters.outgoing.table.file')}</th>
+                            <th>{t('letters.outgoing.table.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -218,7 +220,7 @@ export default function SuratKeluar() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6" className="text-center py-5 text-muted"> Belum ada data surat keluar. </td>
+                                <td colSpan="6" className="text-center py-5 text-muted"> {t('letters.outgoing.table.empty')} </td>
                             </tr>
                         )}
                     </tbody>
@@ -228,7 +230,7 @@ export default function SuratKeluar() {
             {data.length > itemsPerPage && (
                 <div className="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                     <div className="text-muted small">
-                        Menampilkan {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, data.length)} dari {data.length} data
+                        {t('pagination.showing')} {indexOfFirstItem + 1} {t('pagination.to')} {Math.min(indexOfLastItem, data.length)} {t('pagination.from')} {data.length} {t('pagination.data')}
                     </div>
                     <nav>
                         <ul className="pagination pagination-sm m-0">
@@ -284,10 +286,10 @@ export default function SuratKeluar() {
                                         return (
                                             <div className="text-white p-5 d-flex flex-column align-items-center justify-content-center w-100 h-100">
                                                 <i className="bi bi-file-earmark-break display-1 text-white-50 mb-4"></i>
-                                                <h3 className="mb-2">Preview Tidak Tersedia</h3>
-                                                <p className="text-white-50 mb-4 text-center">Format file ini tidak dapat ditampilkan secara langsung.</p>
+                                                <h3 className="mb-2">{t('letters.preview.unavailable_title')}</h3>
+                                                <p className="text-white-50 mb-4 text-center">{t('letters.preview.unavailable_desc_short')}</p>
                                                 <a href={previewFile.url} download={name} className="btn btn-success btn-lg rounded-pill px-5 shadow-sm">
-                                                    <i className="bi bi-download me-2"></i> Download File
+                                                    <i className="bi bi-download me-2"></i> {t('letters.preview.download_file')}
                                                 </a>
                                             </div>
                                         );

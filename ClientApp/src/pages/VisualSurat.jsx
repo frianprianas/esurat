@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import HTMLFlipBook from 'react-pageflip'
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
@@ -52,25 +52,29 @@ export default function VisualSurat() {
 
     if (loading) return <div className="text-center p-5"><div className="spinner-border text-primary"></div></div>
 
+    // Determine incoming/outgoing label
+    const typeLabel = type === 'masuk' ? 'Surat Masuk' : 'Surat Keluar'
+
     return (
         <div className="visual-surat-container">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h3 className="fw-bold m-0 text-primary">
-                    Visual Arsip: Surat {type === 'masuk' ? 'Masuk' : 'Keluar'}
+                    Visualisasi {typeLabel}
                 </h3>
                 <div className="text-muted small">
                     Klik ujung halaman untuk membalik
                 </div>
             </div>
 
-            <div className="book-wrapper d-flex justify-content-center align-items-center p-4">
+            {/* Positioning book firmly to the right */}
+            <div className="book-wrapper w-100 d-flex justify-content-end align-items-center flex-grow-1 pt-5" style={{ minHeight: '600px', maxWidth: '100%', paddingRight: '50px', marginTop: '20px' }}>
                 {data.length === 0 ? (
-                    <div className="alert alert-info">Belum ada data untuk ditampilkan.</div>
+                    <div className="alert alert-info">Belum ada data surat untuk ditampilkan.</div>
                 ) : (
                     <HTMLFlipBook
                         width={500}
                         height={700}
-                        size="stretch"
+                        size="fixed"
                         minWidth={315}
                         maxWidth={1000}
                         minHeight={420}
@@ -78,6 +82,7 @@ export default function VisualSurat() {
                         maxShadowOpacity={0.5}
                         showCover={true}
                         mobileScrollSupport={true}
+                        usePortrait={false}
                         ref={bookRef}
                         className="surat-book"
                     >
@@ -87,12 +92,12 @@ export default function VisualSurat() {
                                 <img src="/images/logo.png" alt="Logo" style={{ width: '100px' }} className="mb-4" />
                                 <h1 className="fw-bold mb-2">ARSIP DIGITAL</h1>
                                 <h3 className="text-uppercase tracking-widest text-primary mb-4">
-                                    Surat {type === 'masuk' ? 'Masuk' : 'Keluar'}
+                                    {typeLabel.toUpperCase()}
                                 </h3>
                                 <div className="divider mb-4" style={{ width: '80px', height: '6px' }}></div>
                                 <p className="fs-5">SMK Bakti Nusantara 666</p>
                                 <div className="mt-auto">
-                                    <p className="mb-0">Arsip Digital</p>
+                                    <p className="mb-0">E-Surat App</p>
                                     <p className="fw-bold">Tahun {new Date().getFullYear()}</p>
                                 </div>
                             </div>
@@ -150,7 +155,7 @@ export default function VisualSurat() {
                                             })()
                                         ) : (
                                             <div className="d-flex align-items-center justify-content-center h-100 text-muted small">
-                                                <i className="bi bi-file-earmark-x me-2"></i> Belum ada dokumen
+                                                <i className="bi bi-file-earmark-x me-2"></i> Tidak ada dokumen
                                             </div>
                                         )}
                                     </div>
@@ -176,7 +181,7 @@ export default function VisualSurat() {
                                     </div>
                                 </div>
                                 <h3 className="fw-bold mb-2 text-white">Akhir Dokumen</h3>
-                                <p className="text-white-50">Seluruh arsip telah ditampilkan.</p>
+                                <p className="text-white-50">Seluruh surat telah ditampilkan.</p>
                                 <button className="btn btn-outline-light rounded-pill mt-4 px-4" onClick={() => bookRef.current.pageFlip().flip(0)}>
                                     <i className="bi bi-arrow-left-circle me-2"></i> Kembali ke Awal
                                 </button>
@@ -216,7 +221,7 @@ export default function VisualSurat() {
                                                 <i className="bi bi-file-earmark-break display-1 text-white-50 mb-4"></i>
                                                 <h3 className="mb-2">Preview Tidak Tersedia</h3>
                                                 <a href={previewFile.url} download={name} className="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
-                                                    Download File
+                                                    Unduh File
                                                 </a>
                                             </div>
                                         );

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useLocation } from 'react-router-dom'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function SuratMasuk() {
+    const { t } = useLanguage()
     const [data, setData] = useState([])
     const [form, setForm] = useState({})
     const [showForm, setShowForm] = useState(false)
@@ -79,14 +81,14 @@ export default function SuratMasuk() {
             }
             setData(updatedData)
             localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData))
-            alert("Data berhasil disimpan (Mode Offline/Demo)")
+            alert(t('letters.alert.save_success_offline'))
         }
         setShowForm(false)
         setForm({})
     }
 
     const handleDelete = async (id) => {
-        if (!confirm('Hapus data ini?')) return;
+        if (!confirm(t('letters.alert.delete_confirm'))) return;
         try {
             await axios.delete(`/api/suratmasuk/${id}`)
             fetchData()
@@ -118,9 +120,9 @@ export default function SuratMasuk() {
     return (
         <div className="card glass border-0 p-3 rounded-3">
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="fw-bold m-0" style={{ color: 'var(--primary)' }}>Surat Masuk</h5>
+                <h5 className="fw-bold m-0" style={{ color: 'var(--primary)' }}>{t('letters.incoming.title')}</h5>
                 <button onClick={() => { setForm({}); setShowForm(!showForm) }} className="btn btn-primary btn-sm rounded-pill px-3">
-                    {showForm ? 'Cancel' : '+ Tambah Baru'}
+                    {showForm ? t('letters.incoming.cancel') : t('letters.incoming.add')}
                 </button>
             </div>
 
@@ -129,23 +131,23 @@ export default function SuratMasuk() {
                     <form onSubmit={handleSubmit}>
                         <div className="row g-3">
                             <div className="col-md-6">
-                                <label className="form-label">Nomor Surat</label>
+                                <label className="form-label">{t('letters.form.number')}</label>
                                 <input className="form-control rounded-3" value={form.nomorSurat || ''} onChange={e => setForm({ ...form, nomorSurat: e.target.value })} required />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label">Pengirim</label>
+                                <label className="form-label">{t('letters.form.sender')}</label>
                                 <input className="form-control rounded-3" value={form.pengirim || ''} onChange={e => setForm({ ...form, pengirim: e.target.value })} required />
                             </div>
                             <div className="col-12">
-                                <label className="form-label">Perihal</label>
+                                <label className="form-label">{t('letters.form.subject')}</label>
                                 <input className="form-control rounded-3" value={form.perihal || ''} onChange={e => setForm({ ...form, perihal: e.target.value })} required />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label">Tanggal Surat</label>
+                                <label className="form-label">{t('letters.form.date')}</label>
                                 <input type="date" className="form-control rounded-3" value={form.tanggalSurat ? form.tanggalSurat.split('T')[0] : ''} onChange={e => setForm({ ...form, tanggalSurat: e.target.value })} required />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label">Upload Dokumen</label>
+                                <label className="form-label">{t('letters.form.upload')}</label>
                                 <input
                                     type="file"
                                     className="form-control rounded-3"
@@ -157,10 +159,10 @@ export default function SuratMasuk() {
                                         }
                                     }}
                                 />
-                                <small className="text-muted">Format: PDF, DOC, DOCX, ODT, JPEG</small>
+                                <small className="text-muted">{t('letters.form.format_hint')}</small>
                             </div>
                             <div className="col-12 mt-4">
-                                <button type="submit" className="btn btn-primary rounded-pill px-5">Save Surat</button>
+                                <button type="submit" className="btn btn-primary rounded-pill px-5">{t('letters.form.save')}</button>
                             </div>
                         </div>
                     </form>
@@ -171,12 +173,12 @@ export default function SuratMasuk() {
                 <table className="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>No Surat</th>
-                            <th>Pengirim</th>
-                            <th>Perihal</th>
-                            <th>Tanggal</th>
-                            <th>File</th>
-                            <th>Actions</th>
+                            <th>{t('letters.incoming.table.no_surat')}</th>
+                            <th>{t('letters.incoming.table.sender')}</th>
+                            <th>{t('letters.incoming.table.subject')}</th>
+                            <th>{t('letters.incoming.table.date')}</th>
+                            <th>{t('letters.incoming.table.file')}</th>
+                            <th>{t('letters.incoming.table.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -190,13 +192,13 @@ export default function SuratMasuk() {
                                     <td>
                                         {item.filePath ? (
                                             <div className="d-flex align-items-center gap-1">
-                                                <button onClick={() => handlePreview(item)} className="btn btn-sm btn-light border d-flex align-items-center gap-2" title="Lihat Preview">
+                                                <button onClick={() => handlePreview(item)} className="btn btn-sm btn-light border d-flex align-items-center gap-2" title={t('letters.preview.view')}>
                                                     <i className="bi bi-eye text-primary"></i>
                                                     <span className="d-none d-md-inline text-truncate" style={{ maxWidth: '120px' }}>
                                                         {item.filePath.indexOf('_') === 36 ? item.filePath.substring(37) : item.filePath}
                                                     </span>
                                                 </button>
-                                                <a href={`/uploads/${item.filePath}`} download target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-success border-0" title="Unduh File">
+                                                <a href={`/uploads/${item.filePath}`} download target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-success border-0" title={t('letters.preview.download_file')}>
                                                     <i className="bi bi-download"></i>
                                                 </a>
                                             </div>
@@ -215,7 +217,7 @@ export default function SuratMasuk() {
                         ) : (
                             <tr>
                                 <td colSpan="6" className="text-center py-5 text-muted">
-                                    Belum ada data surat masuk.
+                                    {t('letters.incoming.table.empty')}
                                 </td>
                             </tr>
                         )}
@@ -226,7 +228,7 @@ export default function SuratMasuk() {
             {data.length > itemsPerPage && (
                 <div className="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                     <div className="text-muted small">
-                        Menampilkan {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, data.length)} dari {data.length} data
+                        {t('pagination.showing')} {indexOfFirstItem + 1} {t('pagination.to')} {Math.min(indexOfLastItem, data.length)} {t('pagination.from')} {data.length} {t('pagination.data')}
                     </div>
                     <nav>
                         <ul className="pagination pagination-sm m-0">
@@ -270,7 +272,7 @@ export default function SuratMasuk() {
                                 </div>
                                 <div className="d-flex gap-2">
                                     <a href={previewFile.url} download={previewFile.name} target="_blank" rel="noreferrer" className="btn btn-primary rounded-pill px-4 d-flex align-items-center gap-2">
-                                        <i className="bi bi-download"></i> <span className="d-none d-sm-inline">Unduh</span>
+                                        <i className="bi bi-download"></i> <span className="d-none d-sm-inline">{t('letters.preview.download')}</span>
                                     </a>
                                     <button type="button" className="btn-close" onClick={() => setPreviewFile(null)}></button>
                                 </div>
@@ -298,12 +300,12 @@ export default function SuratMasuk() {
                                                 <div className="bg-white bg-opacity-10 p-5 rounded-circle mb-4">
                                                     <i className="bi bi-file-earmark-lock display-1 text-white"></i>
                                                 </div>
-                                                <h3 className="mb-2">Preview Tidak Tersedia</h3>
+                                                <h3 className="mb-2">{t('letters.preview.unavailable_title')}</h3>
                                                 <p className="text-white-50 mb-4 text-center" style={{ maxWidth: '400px' }}>
-                                                    Browser tidak mendukung preview untuk format <strong>{ext}</strong> secara langsung. Silakan unduh file untuk melihat isinya.
+                                                    {t('letters.preview.unavailable_desc')} <strong>{ext}</strong>
                                                 </p>
                                                 <a href={previewFile.url} download={name} className="btn btn-light btn-lg rounded-pill px-5 shadow-sm fw-bold text-primary">
-                                                    <i className="bi bi-download me-2"></i> Download Sekarang
+                                                    <i className="bi bi-download me-2"></i> {t('letters.preview.download_now')}
                                                 </a>
                                             </div>
                                         );

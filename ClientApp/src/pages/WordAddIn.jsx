@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function WordAddIn() {
-    const [status, setStatus] = useState("Siap.");
+    const { t } = useLanguage();
+    const [status, setStatus] = useState(t('addin.status.ready'));
     const [isOfficeInitialized, setIsOfficeInitialized] = useState(false);
     const [uploading, setUploading] = useState(false);
 
@@ -12,21 +14,21 @@ export default function WordAddIn() {
             window.Office.onReady((info) => {
                 if (info.host === window.Office.HostType.Word) {
                     setIsOfficeInitialized(true);
-                    setStatus("Terhubung dengan MS Word.");
+                    setStatus(t('addin.status.connected'));
                 } else {
-                    setStatus("Silakan buka halaman ini di dalam MS Word.");
+                    setStatus(t('addin.status.not_in_word'));
                 }
             });
         }
-    }, []);
+    }, [t]);
 
     const handleUpload = async () => {
         if (!isOfficeInitialized) {
-            alert("Harus dijalankan di dalam MS Word!");
+            alert(t('addin.alert.must_in_word'));
             return;
         }
 
-        setStatus("Membaca dokumen...");
+        setStatus(t('addin.status.reading'));
         setUploading(true);
 
         // Get the entire file in slices (chunks)
@@ -39,7 +41,7 @@ export default function WordAddIn() {
 
                 getSlice(myFile, 0, sliceCount, docFileData);
             } else {
-                setStatus("Gagal membaca file: " + result.error.message);
+                setStatus(`${t('addin.status.error_read')}: ${result.error.message}`);
                 setUploading(false);
             }
         });
@@ -59,14 +61,14 @@ export default function WordAddIn() {
                     uploadFile(docFileData);
                 }
             } else {
-                setStatus("Gagal mengambil slice.");
+                setStatus(t('addin.status.error_slice'));
                 setUploading(false);
             }
         });
     };
 
     const uploadFile = async (docFileData) => {
-        setStatus("Mengupload ke server...");
+        setStatus(t('addin.status.uploading'));
 
         // Construct Uint8Array from slices
         const byteArrays = docFileData.map(slice => new Uint8Array(slice));
@@ -75,8 +77,8 @@ export default function WordAddIn() {
         // Prepare FormData
         const formData = new FormData();
         formData.append("NomorSurat", "WORD-AUTO-" + Date.now().toString().substr(-6));
-        formData.append("Pengirim", "MS Word User");
-        formData.append("Perihal", "Dokumen dari MS Word Add-in");
+        formData.append("Pengirim", t('addin.data.sender_default'));
+        formData.append("Perihal", t('addin.data.subject_default'));
         formData.append("TanggalSurat", new Date().toISOString());
         formData.append("File", blob, "word_export_" + Date.now() + ".pdf");
 
@@ -86,11 +88,11 @@ export default function WordAddIn() {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            setStatus("✅ SUKSES! Surat terkirim.");
+            setStatus(t('addin.status.success'));
             console.log(res.data);
         } catch (error) {
             console.error(error);
-            setStatus("❌ Gagal upload: " + (error.response?.data || error.message));
+            setStatus(`${t('addin.status.fail')}: ${error.response?.data || error.message}`);
         } finally {
             setUploading(false);
         }
@@ -100,7 +102,7 @@ export default function WordAddIn() {
         <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-light p-3">
             <div className="card border-0 shadow-sm rounded-4 w-100 text-center p-4">
                 <i className="bi bi-file-word text-primary display-1 mb-3"></i>
-                <h4 className="fw-bold mb-3">Upload ke E-Surat</h4>
+                <h4 className="fw-bold mb-3">{t('addin.title')}</h4>
 
                 <p className="text-muted small mb-4">{status}</p>
 
@@ -110,15 +112,15 @@ export default function WordAddIn() {
                     className="btn btn-primary rounded-pill w-100 py-2 fw-bold"
                 >
                     {uploading ? (
-                        <span><span className="spinner-border spinner-border-sm me-2"></span> Mengirim...</span>
+                        <span><span className="spinner-border spinner-border-sm me-2"></span> {t('addin.button.sending')}</span>
                     ) : (
-                        <span><i className="bi bi-cloud-upload me-2"></i> Upload PDF</span>
+                        <span><i className="bi bi-cloud-upload me-2"></i> {t('addin.button.upload')}</span>
                     )}
                 </button>
             </div>
             <small className="text-muted mt-4 text-center" style={{ fontSize: '0.7rem' }}>
-                Pastikan API Server berjalan. <br />
-                Dokumen akan dikonversi otomatis ke PDF.
+                {t('addin.footer.server_hint')} <br />
+                {t('addin.footer.convert_hint')}
             </small>
         </div>
     );

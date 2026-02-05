@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useLanguage } from '../contexts/LanguageContext'
 
 export default function Notifikasi() {
+    const { t } = useLanguage()
     const [items, setItems] = useState([])
     const [loading, setLoading] = useState(true)
     const [showForm, setShowForm] = useState(false)
@@ -16,29 +18,29 @@ export default function Notifikasi() {
     const [isSending, setIsSending] = useState(false)
 
     const handleSendNow = async () => {
-        if (!adminPassword) return alert("Password tidak boleh kosong")
+        if (!adminPassword) return alert(t('notifications.alert.password_empty'))
 
         setIsSending(true)
         try {
             await axios.post('/api/notifikasi/send-now', { password: adminPassword })
-            alert('Notifikasi berhasil dikirim ke antrian!')
+            alert(t('notifications.alert.success_queued'))
             setShowPasswordModal(false)
             setAdminPassword('')
         } catch (e) {
             console.error("SendNow Error:", e)
 
-            let errorMsg = 'Gagal mengirim notifikasi.'
+            let errorMsg = t('notifications.alert.send_fail')
 
             if (e.response) {
                 if (e.response.status === 401) {
-                    errorMsg = typeof e.response.data === 'string' ? e.response.data : "Password salah. Akses ditolak.";
+                    errorMsg = typeof e.response.data === 'string' ? e.response.data : t('notifications.alert.auth_fail');
                 } else if (e.response.data) {
                     errorMsg = typeof e.response.data === 'string' ? e.response.data : JSON.stringify(e.response.data);
                 } else {
                     errorMsg += ` Status: ${e.response.status}`;
                 }
             } else if (e.request) {
-                errorMsg = "Tidak ada respon dari server (Timeout). Kemungkinan proses masih berjalan di background.";
+                errorMsg = t('notifications.alert.timeout');
             } else {
                 errorMsg = e.message;
             }
@@ -82,17 +84,17 @@ export default function Notifikasi() {
             fetchItems()
             setFormData({ nama: '', noWa: '', email: '' })
         } catch (e) {
-            alert('Gagal menyimpan data')
+            alert(t('notifications.alert.save_fail'))
         }
     }
 
     const handleDelete = async (id) => {
-        if (confirm('Hapus data ini?')) {
+        if (confirm(t('notifications.alert.delete_confirm'))) {
             try {
                 await axios.delete(`/api/notifikasi/${id}`)
                 fetchItems()
             } catch (e) {
-                alert('Gagal menghapus data')
+                alert(t('notifications.alert.delete_fail'))
             }
         }
     }
@@ -100,13 +102,13 @@ export default function Notifikasi() {
     return (
         <div className="container-fluid p-0">
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="fw-bold m-0" style={{ color: 'var(--text-main)' }}>Daftar Notifikasi Bulanan</h5>
+                <h5 className="fw-bold m-0" style={{ color: 'var(--text-main)' }}>{t('notifications.title')}</h5>
                 <div className="d-flex gap-2">
                     <button
                         className="btn btn-warning btn-sm d-flex align-items-center gap-2 px-3 text-white"
                         onClick={() => setShowPasswordModal(true)}
                     >
-                        <i className="bi bi-send-fill"></i> Kirim Sekarang
+                        <i className="bi bi-send-fill"></i> {t('notifications.send_now')}
                     </button>
                     <button
                         className="btn btn-primary btn-sm d-flex align-items-center gap-2 px-3"
@@ -116,7 +118,7 @@ export default function Notifikasi() {
                             setShowForm(true)
                         }}
                     >
-                        <i className="bi bi-plus-lg"></i> Tambah Penerima
+                        <i className="bi bi-plus-lg"></i> {t('notifications.add_recipient')}
                     </button>
                 </div>
             </div>
@@ -127,21 +129,21 @@ export default function Notifikasi() {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content border-0 shadow-lg rounded-4" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(20px)' }}>
                             <div className="modal-header border-bottom-0">
-                                <h5 className="modal-title fw-bold" style={{ color: 'var(--text-main)' }}>Konfirmasi Kirim Notifikasi</h5>
+                                <h5 className="modal-title fw-bold" style={{ color: 'var(--text-main)' }}>{t('notifications.send_modal.title')}</h5>
                                 <button type="button" className="btn-close" onClick={() => setShowPasswordModal(false)}></button>
                             </div>
                             <div className="modal-body">
-                                <p>Masukkan password admin untuk mengirim notifikasi secara manual sekarang.</p>
+                                <p>{t('notifications.send_modal.instruction')}</p>
                                 <input
                                     type="password"
                                     className="form-control"
-                                    placeholder="Password Admin"
+                                    placeholder={t('notifications.send_modal.placeholder')}
                                     value={adminPassword}
                                     onChange={e => setAdminPassword(e.target.value)}
                                 />
                             </div>
                             <div className="modal-footer border-top-0">
-                                <button type="button" className="btn btn-light rounded-pill px-4" onClick={() => setShowPasswordModal(false)} disabled={isSending}>Batal</button>
+                                <button type="button" className="btn btn-light rounded-pill px-4" onClick={() => setShowPasswordModal(false)} disabled={isSending}>{t('notifications.send_modal.cancel')}</button>
                                 <button
                                     type="button"
                                     className="btn btn-warning text-white rounded-pill px-4 fw-bold d-flex align-items-center gap-2"
@@ -151,11 +153,11 @@ export default function Notifikasi() {
                                     {isSending ? (
                                         <>
                                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                            Mengirim...
+                                            {t('notifications.send_modal.sending')}
                                         </>
                                     ) : (
                                         <>
-                                            Kirim
+                                            {t('notifications.send_modal.send')}
                                         </>
                                     )}
                                 </button>
@@ -170,17 +172,17 @@ export default function Notifikasi() {
                     <table className="table table-hover align-middle mb-0">
                         <thead style={{ background: 'var(--bg-gradient-start)' }}>
                             <tr>
-                                <th className="ps-4">Nama</th>
-                                <th>WhatsApp</th>
-                                <th>Email</th>
-                                <th className="text-end pe-4">Aksi</th>
+                                <th className="ps-4">{t('notifications.table.name')}</th>
+                                <th>{t('notifications.table.whatsapp')}</th>
+                                <th>{t('notifications.table.email')}</th>
+                                <th className="text-end pe-4">{t('notifications.table.action')}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
-                                <tr><td colSpan="4" className="text-center py-4">Loading...</td></tr>
+                                <tr><td colSpan="4" className="text-center py-4">{t('common.loading')}</td></tr>
                             ) : items.length === 0 ? (
-                                <tr><td colSpan="4" className="text-center py-4 text-muted">Belum ada data penerima notifikasi</td></tr>
+                                <tr><td colSpan="4" className="text-center py-4 text-muted">{t('notifications.table.empty')}</td></tr>
                             ) : (
                                 items.map(item => (
                                     <tr key={item.id}>
@@ -224,12 +226,12 @@ export default function Notifikasi() {
                         <div className="modal-content border-0 shadow-lg rounded-4" style={{ background: 'var(--glass-bg)', backdropFilter: 'blur(20px)' }}>
                             <form onSubmit={handleSubmit}>
                                 <div className="modal-header border-bottom-0">
-                                    <h5 className="modal-title fw-bold" style={{ color: 'var(--text-main)' }}>{editingItem ? 'Edit Penerima' : 'Tambah Penerima Baru'}</h5>
+                                    <h5 className="modal-title fw-bold" style={{ color: 'var(--text-main)' }}>{editingItem ? t('notifications.recipient_modal.edit_title') : t('notifications.recipient_modal.add_title')}</h5>
                                     <button type="button" className="btn-close" onClick={() => setShowForm(false)}></button>
                                 </div>
                                 <div className="modal-body">
                                     <div className="mb-3">
-                                        <label className="form-label small text-uppercase text-muted fw-bold">Nama Lengkap</label>
+                                        <label className="form-label small text-uppercase text-muted fw-bold">{t('notifications.recipient_modal.full_name')}</label>
                                         <input
                                             className="form-control"
                                             value={formData.nama}
@@ -238,16 +240,16 @@ export default function Notifikasi() {
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label small text-uppercase text-muted fw-bold">No. WhatsApp</label>
+                                        <label className="form-label small text-uppercase text-muted fw-bold">{t('notifications.recipient_modal.whatsapp_label')}</label>
                                         <input
                                             className="form-control"
                                             value={formData.noWa}
                                             onChange={e => setFormData({ ...formData, noWa: e.target.value })}
-                                            placeholder="Contoh: 08123456789"
+                                            placeholder={t('notifications.recipient_modal.whatsapp_placeholder')}
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label small text-uppercase text-muted fw-bold">Alamat Email</label>
+                                        <label className="form-label small text-uppercase text-muted fw-bold">{t('notifications.recipient_modal.email_label')}</label>
                                         <input
                                             type="email"
                                             className="form-control"
@@ -255,12 +257,12 @@ export default function Notifikasi() {
                                             onChange={e => setFormData({ ...formData, email: e.target.value })}
                                             required
                                         />
-                                        <div className="form-text text-muted small">Notifikasi akan dikirim ke email ini setiap tanggal 1.</div>
+                                        <div className="form-text text-muted small">{t('notifications.recipient_modal.helper_text')}</div>
                                     </div>
                                 </div>
                                 <div className="modal-footer border-top-0">
-                                    <button type="button" className="btn btn-light rounded-pill px-4" onClick={() => setShowForm(false)}>Batal</button>
-                                    <button type="submit" className="btn btn-primary rounded-pill px-4 fw-bold">Simpan</button>
+                                    <button type="button" className="btn btn-light rounded-pill px-4" onClick={() => setShowForm(false)}>{t('notifications.recipient_modal.cancel')}</button>
+                                    <button type="submit" className="btn btn-primary rounded-pill px-4 fw-bold">{t('notifications.recipient_modal.save')}</button>
                                 </div>
                             </form>
                         </div>

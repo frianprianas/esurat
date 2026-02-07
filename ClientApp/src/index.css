@@ -927,3 +927,10 @@ h6 {
 [data-theme='dark'] .book-cover-back {
   background: #1e293b;
 }
+
+/* Center the login form when book is opened by shifting the wrapper */
+@media (min-width: 768px) {
+  .book-wrapper.book-opened {
+    transform: translateX(50%);
+  }
+}

@@ -56,25 +56,31 @@ export default function Login({ setUser, theme, setTheme }) {
 
     // Dynamic styles based on theme
     const overlayGradient = theme === 'dark'
-        ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.95) 100%)'
-        : 'linear-gradient(135deg, rgba(2, 132, 199, 0.75) 0%, rgba(56, 189, 248, 0.6) 100%)'
+        ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.65) 0%, rgba(30, 41, 59, 0.75) 100%)'
+        : 'linear-gradient(135deg, rgba(2, 132, 199, 0.4) 0%, rgba(56, 189, 248, 0.3) 100%)'
 
     return (
         <div className="d-flex min-vh-100 position-relative overflow-hidden align-items-center justify-content-center book-perspective">
             {/* Background Image & Overlay */}
             <div className="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" style={{ zIndex: 0 }}>
-                <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    backgroundImage: 'url(/images/gedung.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    filter: theme === 'dark' ? 'grayscale(0.5)' : 'none',
-                    transform: 'scale(1.05)'
-                }}></div>
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        filter: theme === 'dark' ? 'brightness(0.7)' : 'none',
+                        transform: 'scale(1.05)'
+                    }}
+                >
+                    <source src="/animasi2.mp4" type="video/mp4" />
+                </video>
                 <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: overlayGradient }}></div>
             </div>
 
@@ -101,9 +107,17 @@ export default function Login({ setUser, theme, setTheme }) {
 
                 {/* 1. The Right Page (Login Form) */}
                 <div className="book-page-right p-4 p-md-5 d-flex flex-column justify-content-center">
-                    <div className="mb-4 text-center">
+                    <div className="mb-4 text-center position-relative">
                         <h5 className="fw-bold mb-1" style={{ color: 'var(--primary-dark)' }}>{t('auth.welcome_back')}</h5>
                         <p className="text-muted small m-0">{t('auth.login_subtitle')}</p>
+                        <button
+                            onClick={() => setIsBookOpen(false)}
+                            className="btn btn-sm btn-light position-absolute top-0 end-0 rounded-circle shadow-sm"
+                            style={{ width: '24px', height: '24px', padding: 0, marginTop: '-10px', marginRight: '-10px' }}
+                            title="Cancel / Close"
+                        >
+                            <i className="bi bi-x"></i>
+                        </button>
                     </div>
 
                     {error && (
